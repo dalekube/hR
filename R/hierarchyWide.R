@@ -1,11 +1,17 @@
 #' @title hierarchyWide
 #' @description This function takes two lists representing employee and supervisor
-#' identifiers (name, ID, etc.) and returns a wide dataframe consisting of
+#' identifiers (name, ID, etc.) and returns a wide data frame consisting of
 #' a single row per employee and their reporting hierarchy in a wide format.
 #' @param ee A list of values representing employees
 #' @param supv A list of values representing the supervisors of the employees
 #' @import data.tree
 #' @export
+#' @return data frame 
+#' @examples 
+#' ee = c("Dale","Bob","Julie","Susan")
+#' supv = c("Julie","Julie","Susan","George")
+#' hierarchyWide(ee,supv)
+
 hierarchyWide = function(ee,supv){
   require(data.tree)
   if(class(ee)!=class(supv)){
