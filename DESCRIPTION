@@ -3,7 +3,7 @@ Type: Package
 Title: An HR analytics toolkit.  
 Version: 0.1.0
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut", "cre"))
-Description: This package offers functions to process and visualize people data in meaningful ways for analytics practitioners in Human Resources.
+Description: This package offers functions to easily work with people data in meaningful ways for analytics practitioners in Human Resources.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
