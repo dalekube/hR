@@ -7,12 +7,24 @@
 hierarchyWide(ee, supv)
 }
 \arguments{
-\item{ee}{A value representing an employee}
+\item{ee}{A list of values representing employees (e.g. employee IDs).}
 
-\item{supv}{A value representing the employee's supervisor}
+\item{supv}{A list of values representing the supervisors of the employees. These values should be
+of the same type as the employee values.}
+}
+\value{
+data frame
 }
 \description{
 This function takes two lists representing employee and supervisor
-identifiers (name, ID, etc.) and returns a wide dataframe consisting of
-a single row per employee and their reporting hierarchy in a wide format.
+identifiers (name, ID, etc.) and returns a wide data frame consisting of
+a single row per employee and their respective reporting hierarchy in a wide format.
+
+The resulting format is very useful for subsequent aggregation of employee data
+for a particular leadership tree.
+}
+\examples{
+ee = c("Dale","Bob","Julie","Susan")
+supv = c("Julie","Julie","Susan","George")
+hierarchyWide(ee,supv)
 }
