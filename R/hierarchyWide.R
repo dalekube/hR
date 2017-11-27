@@ -1,7 +1,7 @@
 #' @title hierarchyWide
 #' @description This function takes two lists representing employee and supervisor
 #' identifiers (name, ID, etc.) and returns a wide data frame consisting of
-#' a single row per employee and their reporting hierarchy in a wide format.
+#' a single row per employee and their respective reporting hierarchy in a wide format.
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
