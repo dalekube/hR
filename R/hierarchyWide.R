@@ -2,12 +2,13 @@
 #' @description This function takes two lists representing employee and supervisor
 #' identifiers (name, ID, etc.) and returns a wide data frame consisting of
 #' a single row per employee and their reporting hierarchy in a wide format.
-#' @param ee A list of values representing employees
-#' @param supv A list of values representing the supervisors of the employees
+#' @param ee A list of values representing employees (e.g. employee IDs).
+#' @param supv A list of values representing the supervisors of the employees. These values should be
+#' of the same type as the employee values.
 #' @import data.tree
 #' @export
-#' @return data frame 
-#' @examples 
+#' @return data frame
+#' @examples
 #' ee = c("Dale","Bob","Julie","Susan")
 #' supv = c("Julie","Julie","Susan","George")
 #' hierarchyWide(ee,supv)
