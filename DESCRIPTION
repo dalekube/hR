@@ -4,7 +4,7 @@ Title: An HR analytics toolkit.
 Version: 0.1.1
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
 Maintainer: Dale Kube <dkube@uwalumni.com>
-Description: This package offers functions to easily work with people data in meaningful ways for analytics practitioners in Human Resources.
+Description: This package helps analytics practitioners in Human Resources to manipulate and visualize people data in meaningful ways.
 Encoding: UTF-8
 License: GPL
 LazyData: true
