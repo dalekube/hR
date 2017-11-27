@@ -2,6 +2,8 @@
 #' @description This function takes two lists representing employee and supervisor
 #' identifiers (name, ID, etc.) and returns a wide data frame consisting of
 #' a single row per employee and their respective reporting hierarchy in a wide format.
+#' The resulting format is very useful for subsequent aggregation of employee data
+#' for a particular leadership tree.
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
