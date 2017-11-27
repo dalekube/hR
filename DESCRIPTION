@@ -2,8 +2,7 @@ Package: hR
 Type: Package
 Title: An HR analytics toolkit.  
 Version: 0.1.0
-Author: Dale Kube <dkube@uwalumni.com>
-Maintainer: Dale Kube <dkube@uwalumni.com>
+Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut", "cre"))
 Description: This package supplies functions to efficiently process and visualize data in common ways that are helpful to HR (Human Resources) analytics practitioners.
 License:
 Encoding: UTF-8

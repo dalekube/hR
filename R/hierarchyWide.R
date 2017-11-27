@@ -7,12 +7,14 @@
 #' @import dplyr data.tree
 #' @export
 hierarchyWide = function(ee,supv){
+  require(dplyr)
+  require(data.tree)
   if(class(ee)!=class(supv)){
     stop("Employee and supervisor inputs are different data types.")
   }else if(length(ee)!=length(supv)){
     stop("Employee and supervisor inputs are of different lengths.")
   }else{
-    tree = data.tree::FromDataFrameNetwork(df)
+    tree = FromDataFrameNetwork(df)
     lev = max(print(tree,by="level")[,2])
     for(i in 3:lev){
       df[,i] = ""
