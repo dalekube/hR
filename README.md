@@ -1,2 +1,2 @@
 # hR
-This package supplies functions to efficiently process and visualize data in common ways that are helpful to HR (Human Resources) analytics practitioners.
+This package helps analytics practitioners manipulate and visualize people data in meaningful ways.
