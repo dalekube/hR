@@ -1,2 +1,2 @@
 # hR
-This toolkit helps analytics practitioners manipulate and visualize people data in meaningful ways.
+Manipulate and visualize people data in meaningful and common ways for HR analytics.
