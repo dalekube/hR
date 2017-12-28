@@ -17,7 +17,8 @@
 #' hierarchyWide(ee,supv)
 
 hierarchyWide = function(ee,supv){
-
+  if(is.factor(ee)) ee = as.character(ee)
+  if(is.factor(supv)) supv = as.character(supv)
   if(class(ee)!=class(supv)){
     stop("Employee and supervisor inputs are different data types.")
   }else if(length(ee)!=length(supv)){
