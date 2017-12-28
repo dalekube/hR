@@ -9,7 +9,6 @@
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
-#' @import data.tree
 #' @export
 #' @return data frame
 #' @examples
@@ -18,7 +17,7 @@
 #' hierarchyWide(ee,supv)
 
 hierarchyWide = function(ee,supv){
-  require(data.tree)
+
   if(class(ee)!=class(supv)){
     stop("Employee and supervisor inputs are different data types.")
   }else if(length(ee)!=length(supv)){

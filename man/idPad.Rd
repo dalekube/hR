@@ -16,23 +16,11 @@ will be added to fill up the space to meet the requirement.}
 character value
 }
 \description{
-This function converts an employee ID into a specified format
+This function converts an all-integer employee ID into a specified format
 that includes leading zeroes. HR systems often create employee IDs that have leading zeroes.
 The leading zeroes can be lost when they are worked on in Excel or other tools. It's usually
 helpful to convert the IDs back the correct format when performing lookups.
 }
 \examples{
-# Using a string input
-id = "12345"
-len = 9
-idPad(id,len)
-
-"000012345"
-
-# Using a numeric input
-id = 54321
-len = 9
-idPad(id,len)
-
-"000054321"
+idPad(id="12345",len=9)
 }
