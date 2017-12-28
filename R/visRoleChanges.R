@@ -3,33 +3,49 @@
 #' the titles of employees from two different time periods.This function is useful
 #' for visualizing "before-and-after" role changes.
 #'
-#' @param df A data frame with two columns. Column 1 should be the "before" job titles. Column 2 should be the "after" job titles".
-#' @param supv A list of values representing the supervisors of the employees. These values should be
-#' of the same type as the employee values.
+#' @param before A vector representing the job titles BEFORE a change.
+#' @param after A vector representing the job titles AFTER a change. This must be paired with the BEFORE job titles and must be of the same length.
 #' @import visNetwork
 #' @import dplyr
 #' @export
 #' @return visNetwork
 #' @examples
-#' df = data.frame(from=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
-#'                to=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
-#' visRoleChanges(df)
+#' df = data.frame(before=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
+#'                after=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
+#' visRoleChanges(df$before,df$after)
 
-visRoleChanges = function(df){
-  edges = as.data.frame(lapply(df,as.character),stringsAsFactors=F)
+visRoleChanges = function(before,after){
+
+  # Handling errors ---------------------------------------------------------
+  if(length(before)!=length(after)){
+    stop("'before' and 'after' vectors are not of the same length.")
+  }
+  if(!(is.character(before) | is.factor(before))){
+    stop("'before' vector needs to contain strings or factors.")
+  }
+  if(!(is.character(after) | is.factor(after))){
+    stop("'after' vector needs to contain strings or factors.")
+  }
+
+  # Processing the visualization --------------------------------------------
+  edges = data.frame(before=as.character(before),
+                     after=as.character(after),
+                     stringsAsFactors=F)
   edges = edges %>%
-    group_by(from,to) %>%
+    group_by(before,after) %>%
     summarise(label=n()) %>%
     ungroup() %>%
     mutate(arrows="to")
-  nodes = unique(c(edges$from,edges$to))
+  nodes = unique(c(edges$before,edges$after))
   nodes = data.frame(id=nodes,label=nodes,stringsAsFactors=F)
   total = edges %>%
-    group_by(to) %>%
+    group_by(after) %>%
     summarise(value=sum(label)) %>%
     ungroup() %>%
-    rename(id=to)
+    rename(id=after)
   nodes = merge(nodes,total)
   visNetwork(nodes,edges) %>%
     visOptions(highlightNearest=T)
 }
+
+

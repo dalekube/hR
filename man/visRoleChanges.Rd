@@ -4,13 +4,12 @@
 \alias{visRoleChanges}
 \title{visRoleChanges}
 \usage{
-visRoleChanges(df)
+visRoleChanges(before, after)
 }
 \arguments{
-\item{df}{A data frame with two columns. Column 1 should be the "before" job titles. Column 2 should be the "after" job titles".}
+\item{before}{A vector representing the job titles BEFORE a change.}
 
-\item{supv}{A list of values representing the supervisors of the employees. These values should be
-of the same type as the employee values.}
+\item{after}{A vector representing the job titles AFTER a change. This must be paired with the BEFORE job titles and must be of the same length.}
 }
 \value{
 visNetwork
@@ -21,7 +20,7 @@ the titles of employees from two different time periods.This function is useful
 for visualizing "before-and-after" role changes.
 }
 \examples{
-df = data.frame(from=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
-               to=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
-visRoleChanges(df)
+df = data.frame(before=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
+               after=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
+visRoleChanges(df$before,df$after)
 }
