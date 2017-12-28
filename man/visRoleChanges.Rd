@@ -20,7 +20,7 @@ the titles of employees from two different time periods. This function is useful
 for visualizing "before-and-after" role changes.
 }
 \examples{
-before = c("builder","recruiter","manager","builder")
-after = c("builder","recruiter","manager","manager")
+before = c("builder","recruiter","manager","builder","builder")
+after = c("builder","recruiter","manager","manager","builder")
 visRoleChanges(before,after)
 }

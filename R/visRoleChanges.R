@@ -9,11 +9,14 @@
 #' @export
 #' @return visNetwork
 #' @examples
-#' before = c("builder","recruiter","manager","builder")
-#' after = c("builder","recruiter","manager","manager")
+#' before = c("builder","recruiter","manager","builder","builder")
+#' after = c("builder","recruiter","manager","manager","builder")
 #' visRoleChanges(before,after)
 
 visRoleChanges = function(before,after){
+
+  library(dplyr,quietly=T)
+  library(visNetwork,quietly=T)
 
   # Handling errors ---------------------------------------------------------
   if(length(before)!=length(after)){
@@ -43,8 +46,8 @@ visRoleChanges = function(before,after){
     ungroup() %>%
     rename(id=after)
   nodes = merge(nodes,total)
-  visNetwork(nodes,edges) %>%
-    visOptions(highlightNearest=T)
+  edges = edges %>% rename(from=before,to=after)
+  visNetwork(nodes,edges) %>% visOptions(highlightNearest=T)
 }
 
 
