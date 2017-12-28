@@ -9,6 +9,6 @@ Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.0.1
-Imports: data.tree
+Imports: data.tree,visNetwork,dplyr
 Suggests: knitr,rmarkdown
 VignetteBuilder: knitr

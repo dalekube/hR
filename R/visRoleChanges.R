@@ -5,14 +5,13 @@
 #'
 #' @param before A vector representing the job titles BEFORE a change.
 #' @param after A vector representing the job titles AFTER a change. This must be paired with the BEFORE job titles and must be of the same length.
-#' @import visNetwork
-#' @import dplyr
+#' @import visNetwork,dplyr
 #' @export
 #' @return visNetwork
 #' @examples
-#' df = data.frame(before=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
-#'                after=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
-#' visRoleChanges(df$before,df$after)
+#' before = c("builder","recruiter","manager","builder")
+#' after = c("builder","recruiter","manager","manager")
+#' visRoleChanges(before,after)
 
 visRoleChanges = function(before,after){
 

@@ -20,7 +20,7 @@ the titles of employees from two different time periods. This function is useful
 for visualizing "before-and-after" role changes.
 }
 \examples{
-df = data.frame(before=c(rep("builder",10),"tester","tester","builder","manager","builder","recruiter"),
-               after=c("tester",rep("builder",10),"tester","builder","manager","builder","builder"))
-visRoleChanges(df$before,df$after)
+before = c("builder","recruiter","manager","builder")
+after = c("builder","recruiter","manager","manager")
+visRoleChanges(before,after)
 }
