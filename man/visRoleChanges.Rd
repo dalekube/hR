@@ -15,8 +15,8 @@ visRoleChanges(before, after)
 visNetwork
 }
 \description{
-This function requires one data frame with two columns representing
-the titles of employees from two different time periods.This function is useful
+This function requires two vectors representing
+the titles of employees from two different time periods. This function is useful
 for visualizing "before-and-after" role changes.
 }
 \examples{

@@ -1,6 +1,6 @@
 #' @title visRoleChanges
-#' @description This function requires one data frame with two columns representing
-#' the titles of employees from two different time periods.This function is useful
+#' @description This function requires two vectors representing
+#' the titles of employees from two different time periods. This function is useful
 #' for visualizing "before-and-after" role changes.
 #'
 #' @param before A vector representing the job titles BEFORE a change.
