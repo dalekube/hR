@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The hR package helps data analysts and data scientists who focus on workforce/employee/HR problems (e.g. predicting high quality hires). This package offers tools to effectively manipulate, analyze, and visualize people data.
+The 'hR' package helps data analysts and data scientists who focus on workforce/employee/HR problems (e.g. predicting high quality hires). This package offers tools to effectively manipulate, analyze, and visualize people data.
 
 ## visRoleChanges
 
