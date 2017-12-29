@@ -1,0 +1,46 @@
+---
+title: "hR: An HR Analytics R Toolkit"
+author: "Dale Kube"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hR: An HR Analytics R Toolkit}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The hR package helps data analysts and data scientists who focus on workforce/employee/HR problems (e.g. predicting high quality hires). This package offers tools to effectively manipulate, analyze, and visualize people data.
+
+## visRoleChanges
+
+People data analyses often involve the juxtaposition of "before-and-after" differences in roles or duties to understand what changed. The 'visRoleChanges' function produces a visNetwork graph that visualizes before-and-after changes in roles or other categorical attributes of an employee.
+
+Use 'visRoleChanges' when you're comparing roles or functions for employees who were active at two different periods of time:
+
+```{r,fig.height=3,fig.width=5}
+library(hR)
+before = c("builder","recruiter","manager","builder","builder","recruiter")
+after = c("builder","recruiter","manager","manager","builder","builder")
+visRoleChanges(before,after)
+```
+
+## hierarchyWide
+
+The hierarchyWide function turns a standard two column data set of employee IDs and supervisor IDs into a wide format that can be used to easily aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to "Julie"). Lines of leadership are split into columns or levels. Starting with the top line of leadership found in the data, named as "Supv1", it constructs additional columns (e.g. "Supv2") and indicates which subsequent leader each employee falls under.
+
+The hierarchyWide function also returns a data tree in the console to provide a simple summary of the reporting structure.
+
+```{r}
+ee = c("Dale","Bob","Julie","Susan")
+supv = c("Julie","Julie","Susan","George")
+test = hierarchyWide(ee,supv)
+head(test)
+```
+
+## idPad
+
+The 'idPad' function transforms employee IDs from an integer format (with leading zeroes removed) to a formal character format that includes leading zeroes. Many HR systems create integer employee IDs with leading zeroes; and the leading zeroes are often lost in data analysis because many applications automatically remove them. In many cases, it's necessary to perform lookups and munge data from multiple sources using the formal IDs. 'idPad' will help you to convert employee IDs back into the proper format.
+
+```{r}
+idPad(id="12345",len=9)
+```
