@@ -1,10 +1,11 @@
-#' @title hierarchyWide
+#' @title hierarchyLong
 #' @description This function takes employee and supervisor
-#' identifiers (name, ID, etc.) and returns a wide data frame consisting of
-#' a single row per employee and their respective reporting hierarchy in a wide format.
+#' identifiers (name, ID, etc.) and returns a long data frame consisting of
+#' one row per employee for every supervisor above them, up to the CEO.
 #'
-#' The resulting format is very useful for subsequent aggregation of employee data
-#' for a particular leadership tree.
+#' The resulting format is useful for quickly filtering to a specific
+#' part of the workforce that directly and indirectly reports up through
+#' a particular leader.
 #'
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
@@ -14,7 +15,7 @@
 #' @examples
 #' ee = c("Dale","Bob","Julie","Susan")
 #' supv = c("Julie","Julie","Susan","George")
-#' hierarchyWide(ee,supv)
+#' hierarchyLong(ee,supv)
 
 hierarchyWide = function(ee,supv){
   if(is.factor(ee)) ee = as.character(ee)
@@ -39,15 +40,12 @@ hierarchyWide = function(ee,supv){
         }
       }
     }
-    df.new = t(apply(df,1,function(x){c(x[is.na(x)],x[!is.na(x)])}))
-    df.new = data.frame(cbind(df$ee,df.new),stringsAsFactors=F)
-    for(i in 2:ncol(df.new)){
-      df.new[,i] = ifelse(df.new[,i]==df.new[1],NA,df.new[,i])
-    }
-    df.new = df.new[colSums(!is.na(df.new)) > 0]
-    df.new = cbind(df.new[1],rev(df.new[2:ncol(df.new)]))
-    colnames(df.new)[2:ncol(df.new)] = paste0("Supv",seq(1,ncol(df.new)-1))
-    colnames(df.new)[1] = "Employee"
-    return(df.new)
+    z = 2:ncol(df)
+    colnames(df)[z] = z-1
+    df = reshape2::melt(df,id=1) %>%
+      select(Employee=1,Level=2,Supervisor=3) %>%
+      filter(!is.na(Supervisor)) %>%
+      arrange(Employee,Level)
+    return(df)
   }
 }
