@@ -17,7 +17,9 @@
 #' supv = c("Julie","Julie","Susan","George")
 #' hierarchyLong(ee,supv)
 
-hierarchyWide = function(ee,supv){
+hierarchyLong = function(ee,supv){
+  require(data.tree)
+  require(dplyr)
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
   if(class(ee)!=class(supv)){
