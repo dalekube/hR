@@ -17,7 +17,7 @@
 #' hierarchyWide(ee,supv)
 
 hierarchyWide = function(ee,supv){
-  require(data.tree)
+
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
   if(class(ee)!=class(supv)){

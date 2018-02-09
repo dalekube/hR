@@ -13,8 +13,7 @@
 #' visRoleChanges(before,after)
 
 visRoleChanges = function(before,after){
-  require(dplyr)
-  require(visNetwork)
+
   # Handling errors ---------------------------------------------------------
   if(length(before)!=length(after)){
     stop("'before' and 'after' vectors are not of the same length.")
