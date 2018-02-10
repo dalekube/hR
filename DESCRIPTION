@@ -1,14 +1,12 @@
 Package: hR
 Type: Package
-Title: An HR analytics toolkit
+Title: An HR Analytics Toolkit
 Version: 0.1.1
+Author: Dale Kube [aut, cre]
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
-Maintainer: Dale Kube <dkube@uwalumni.com>
 Description: Manipulate and visualize people data in meaningful and common ways for HR analytics.
 Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.0.1
-Imports: data.tree,visNetwork,dplyr,reshape2
-Suggests: knitr,rmarkdown
-VignetteBuilder: knitr
+Imports: data.tree, reshape2, visNetwork

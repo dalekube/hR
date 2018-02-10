@@ -9,6 +9,7 @@
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
+#' @import data.tree
 #' @export
 #' @return data frame
 #' @examples

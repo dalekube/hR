@@ -10,6 +10,7 @@
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
+#' @import reshape2 data.tree
 #' @export
 #' @return data frame
 #' @examples
@@ -43,10 +44,10 @@ hierarchyLong = function(ee,supv){
     }
     z = 2:ncol(df)
     colnames(df)[z] = z-1
-    df = reshape2::melt(df,id=1) %>%
-      select(Employee=1,Level=2,Supervisor=3) %>%
-      filter(!is.na(Supervisor)) %>%
-      arrange(Employee,Level)
+    df = melt(df,id=1)
+    colnames(df) = c("Employee","Level","Supervisor")
+    df = df[!is.na(df$Supervisor),]
+    df = df[order(df$Employee,df$Level),]
     return(df)
   }
 }

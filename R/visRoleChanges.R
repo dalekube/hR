@@ -5,6 +5,7 @@
 #'
 #' @param before A vector representing the job titles BEFORE a change.
 #' @param after A vector representing the job titles AFTER a change. This must be paired with the BEFORE job titles and must be of the same length.
+#' @import visNetwork
 #' @export
 #' @return visNetwork
 #' @examples
@@ -29,20 +30,14 @@ visRoleChanges = function(before,after){
   edges = data.frame(before=as.character(before),
                      after=as.character(after),
                      stringsAsFactors=F)
-  edges = edges %>%
-    group_by(before,after) %>%
-    summarise(label=n()) %>%
-    ungroup() %>%
-    mutate(arrows="to")
-  nodes = unique(c(edges$before,edges$after))
+  edges = with(edges,aggregate(after,by=list(before,after),length))
+  colnames(edges) = c("from","to","label")
+  edges$arrows = "to"
+  nodes = unique(c(edges$from,edges$to))
   nodes = data.frame(id=nodes,label=nodes,stringsAsFactors=F)
-  total = edges %>%
-    group_by(after) %>%
-    summarise(value=sum(label)) %>%
-    ungroup() %>%
-    rename(id=after)
-  nodes = merge(nodes,total)
-  edges = edges %>% rename(from=before,to=after)
+  total = with(edges,aggregate(label,by=list(to),sum))
+  colnames(total) = c("after","value")
+  nodes = merge(nodes,total,by.x="id",by.y="after")
   visNetwork(nodes,edges) %>% visOptions(highlightNearest=T)
 }
 
