@@ -1,3 +1,4 @@
+
 #' @title hierarchyWide
 #' @description This function takes employee and supervisor
 #' identifiers (name, ID, etc.) and returns a wide data frame consisting of
@@ -13,8 +14,8 @@
 #' @export
 #' @return data frame
 #' @examples
-#' ee = c("Dale","Bob","Julie","Susan")
-#' supv = c("Julie","Julie","Susan","George")
+#' ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
+#' supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
 #' hierarchyWide(ee,supv)
 
 hierarchyWide = function(ee,supv){
@@ -27,28 +28,44 @@ hierarchyWide = function(ee,supv){
     stop("Employee and supervisor inputs are of different lengths.")
   }else{
     df = data.frame(ee,supv,stringsAsFactors=F)
-    tree = FromDataFrameNetwork(df)
-    print("The hierarchy structure:")
-    lev = max(print(tree,by="level")[,2])
-    if(lev>2){
-      for(i in 3:lev){
-        df[,i] = ""
-      }
-      for(w in 3:lev){
-        for(i in 1:nrow(df)){
-          x = df$supv[df$ee==df[i,w-1]]
-          df[i,w] = ifelse(length(x)>0,x,NA)
+    
+    tryCatch(
+      {tree = FromDataFrameNetwork(df)},
+      error=function(cond){
+        message("The network is not a tree! Make sure the data reflects complete, unbroken tree of employees and supervisors.")
+      },
+      finally={
+        
+        if(tree$height>2){
+          x = 3:tree$height
+          df[,x] = ""
+          for(w in x){
+            for(i in 1:nrow(df)){
+              y = df$supv[df$ee==df[i,w-1]]
+              df[i,w] = ifelse(length(y)>0,y,NA)
+            }
+          }
         }
+        df.names = df$ee
+        df = t(apply(df,1,function(x){c(x[is.na(x)],x[!is.na(x)])}))
+        df = as.data.frame(
+          cbind(df.names,df),
+          stringsAsFactors=F
+          )
+        
+        # Remove supervisor names that equal the employee name
+        n = ncol(df)
+        df[2:n] = lapply(df[2:n],function(x) ifelse(x==df[,1],NA,x))
+        df = df[colSums(!is.na(df)) > 0]
+        
+        # Reorder and set column names
+        df = cbind(df[1],rev(df[2:ncol(df)]))
+        supv.cols = paste0("Supv",seq(1,ncol(df)-1))  
+        colnames(df) = c("Employee",supv.cols)
+        return(df)
+        
       }
-    }
-    df.new = t(apply(df,1,function(x){c(x[is.na(x)],x[!is.na(x)])}))
-    df.new = as.data.frame(cbind(df$ee,df.new),stringsAsFactors=F)
-    for(i in 2:ncol(df.new)){
-      df.new[,i] = ifelse(df.new[,i]==df.new[1],NA,df.new[,i])
-    }
-    df.new = df.new[colSums(!is.na(df.new)) > 0]
-    df.new = cbind(df.new[1],rev(df.new[2:ncol(df.new)]))
-    colnames(df.new) = c("Employee",paste0("Supv",seq(1,ncol(df.new)-1)))
-    return(df.new)
+    )
+    
   }
 }
