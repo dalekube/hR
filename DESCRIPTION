@@ -11,3 +11,6 @@ License: GPL
 LazyData: true
 RoxygenNote: 6.1.1
 Imports: data.tree, data.table
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

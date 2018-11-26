@@ -1,0 +1,40 @@
+---
+title: "hR: An HR Analytics Toolkit"
+author: "Dale Kube"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(hR)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The ‘hR’ package serves as a toolkit for data analysts, data scientists, and other analytics practitioners who address workforce-related problems. The goal of the package is to provide functions for manipulating, analyzing, and visualizing people data in meaningful ways. Two functions are currently available, and more are on the way!
+
+## hierarchyWide
+
+The hierarchyWide function transforms a standard set of employee and supervisor identifiers into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to “Julie”).
+
+```{r}
+ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
+supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+hierarchyWide(ee,supv)
+```
+
+## hierarchyLong
+
+The hierarchyLong function transforms a standard set of employee and supervisor identifiers into a long format. This is especially useful for narrowing in on a subset of the workforce that reports up to a single person. The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the CEO. The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
+
+```{r}
+ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
+supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+hierarchyLong(ee,supv)
+```

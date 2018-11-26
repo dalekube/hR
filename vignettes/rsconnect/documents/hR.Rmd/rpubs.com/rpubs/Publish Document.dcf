@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/443078/90853fa271214581ac8187cd67edbf33
+bundleId: https://api.rpubs.com/api/v1/document/443078/90853fa271214581ac8187cd67edbf33
+url: http://rpubs.com/dalekube/443078
+when: 1543265442.57072
