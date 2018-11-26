@@ -24,7 +24,7 @@ The resulting format is very useful for subsequent aggregation of employee data
 for a particular leadership tree.
 }
 \examples{
-ee = c("Dale","Bob","Julie","Susan")
-supv = c("Julie","Julie","Susan","George")
+ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
+supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
 hierarchyWide(ee,supv)
 }

@@ -49,9 +49,9 @@ hierarchyLong = function(ee,supv){
         colnames(df)[z] = z-1
         df = as.data.table(df)
         df = melt.data.table(df,id.vars=1)
-        setnames(df,c("Employee","Level","Supervisor"))
-        df = df[!is.na(Supervisor)]
-        df = df[order(Employee,Level)]
+        colnames(df) = c("Employee","Level","Supervisor")
+        df = df[!is.na(df$Supervisor)]
+        df = df[order(df$Employee,df$Level)]
         df = as.data.frame(df)
         return(df)
       }

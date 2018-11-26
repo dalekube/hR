@@ -25,7 +25,7 @@ part of the workforce that directly and indirectly reports up through
 a particular leader.
 }
 \examples{
-ee = c("Dale","Bob","Julie","Susan")
-supv = c("Julie","Julie","Susan","George")
+ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
+supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
 hierarchyLong(ee,supv)
 }
