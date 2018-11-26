@@ -2,8 +2,5 @@
 
 export(hierarchyLong)
 export(hierarchyWide)
-export(idPad)
-export(visRoleChanges)
+import(data.table)
 import(data.tree)
-import(reshape2)
-import(visNetwork)
