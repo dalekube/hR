@@ -1,12 +1,9 @@
 
 #' @title hierarchyWide
-#' @description This function takes employee and supervisor
-#' identifiers (name, ID, etc.) and returns a wide data frame consisting of
-#' a single row per employee and their respective reporting hierarchy in a wide format.
-#'
-#' The resulting format is very useful for subsequent aggregation of employee data
-#' for a particular leadership tree.
-#'
+#' @description This function transforms a standard set of employee 
+#' and supervisor identifiers into a wide format with complete hierarchies. 
+#' The resulting data can be aggregated by a particular person (i.e. include 
+#' everyone who rolls up to "Julie") to include all direct and indirect reports.
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
