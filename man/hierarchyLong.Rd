@@ -9,20 +9,21 @@ hierarchyLong(ee, supv)
 \arguments{
 \item{ee}{A list of values representing employees (e.g. employee IDs).}
 
-\item{supv}{A list of values representing the supervisors of the employees. These values should be
-of the same type as the employee values.}
+\item{supv}{A list of values representing the supervisors of the 
+employees. These values should be of the same data type as the employee values.}
 }
 \value{
 data frame
 }
 \description{
-This function takes employee and supervisor
-identifiers (name, ID, etc.) and returns a long data frame consisting of
-one row per employee for every supervisor above them, up to the CEO.
-
-The resulting format is useful for quickly filtering to a specific
-part of the workforce that directly and indirectly reports up through
-a particular leader.
+This function transforms a standard set of 
+employee and supervisor identifiers into a long format representing
+full hierarchies. This is especially useful for narrowing in on a 
+subset of the workforce that reports up to a single person. The 
+function returns a long data frame consisting of one row per employee 
+for every supervisor above them, up to the CEO. The levels represent 
+the number of supervisors from the employee (starting with "1" for 
+an employee's direct supervisor).
 }
 \examples{
 ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
