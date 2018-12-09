@@ -17,13 +17,30 @@
 
 hierarchyWide = function(ee,supv){
 
+  # Validate character type for inputs
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
+  
+  # Ensure the inputs are the same type
   if(class(ee)!=class(supv)){
+    
     stop("Employee and supervisor inputs are different data types.")
+  
+  # Ensure the inputs are of equal length
+  }else if(
+    sum(is.na(ee)) > 0 |
+    sum(is.na(supv)) >0
+  ){
+    
+    stop("Missing values exist.")
+    
+  # Ensure the inputs are of equal length
   }else if(length(ee)!=length(supv)){
+  
     stop("Employee and supervisor inputs are of different lengths.")
-  }else{
+    
+    }else{
+    
     df = data.frame(ee,supv,stringsAsFactors=F)
     
     tryCatch(

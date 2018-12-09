@@ -6,7 +6,7 @@
 #' subset of the workforce that reports up to a single person. The 
 #' function returns a long data frame consisting of one row per employee 
 #' for every supervisor above them, up to the CEO. The levels represent 
-#' the number of supervisors from the employee (starting with "1" for 
+#' the number of supervisors from the employee (starting with 1 for 
 #' an employee's direct supervisor).
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the 
@@ -23,11 +23,27 @@ hierarchyLong = function(ee,supv){
 
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
+  
+  # Ensure the inputs are the same type
   if(class(ee)!=class(supv)){
+    
     stop("Employee and supervisor inputs are different data types.")
+    
+  # Ensure the inputs are of equal length
+  }else if(
+    sum(is.na(ee)) > 0 |
+    sum(is.na(supv)) >0
+  ){
+    
+    stop("Missing values exist.")
+    
+  # Ensure the inputs are of equal length
   }else if(length(ee)!=length(supv)){
+    
     stop("Employee and supervisor inputs are of different lengths.")
+    
   }else{
+    
     df = data.frame(ee,supv,stringsAsFactors=F)
     tryCatch(
       {tree = FromDataFrameNetwork(df)},
