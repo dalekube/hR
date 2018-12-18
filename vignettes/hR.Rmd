@@ -17,24 +17,41 @@ knitr::opts_chunk$set(
 )
 ```
 
-The ‘hR’ package serves as a toolkit for data analysts, data scientists, and other analytics practitioners who address workforce-related problems. The goal of the package is to provide functions for manipulating, analyzing, and visualizing people data in meaningful ways. Two functions are currently available, and more are on the way!
+The 'hR' package serves as a toolkit for data analysts, data scientists, and other analytics practitioners who address workforce-related problems. The goal of the package is to provide functions for manipulating, analyzing, and visualizing people data in meaningful ways. Two functions are currently available, and more are on the way!  
+
+Install the package from CRAN by running the `install.packages("hR")` command.
+
 
 ## hierarchyWide
 
-The hierarchyWide function transforms a standard set of employee and supervisor identifiers into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to “Julie”).
+The hierarchyWide function transforms a standard set of employee and supervisor identifiers into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame with an additional column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is the CEO in your organization).
 
 ```{r}
 ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
 supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
-hierarchyWide(ee,supv)
+df = hierarchyWide(ee,supv)
+print(df)
+
+# How many employees report up through Susan?
+sum(df$Supv2=="Susan",na.rm=T)
+
+# Who reports up through Susan?
+df[which(df$Supv2=="Susan"),]
 ```
 
 ## hierarchyLong
 
-The hierarchyLong function transforms a standard set of employee and supervisor identifiers into a long format. This is especially useful for narrowing in on a subset of the workforce that reports up to a single person. The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the CEO. The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
+The hierarchyLong function transforms a standard set of employee and supervisor identifiers into a long format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization). The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
 
 ```{r}
 ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
 supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
-hierarchyLong(ee,supv)
+df = hierarchyLong(ee,supv)
+print(df)
+
+# How many employees report up through Susan?
+nrow(df[df$Supervisor=="Susan",])
+
+# Who reports up through Susan?
+df[df$Supervisor=="Susan",]
 ```
