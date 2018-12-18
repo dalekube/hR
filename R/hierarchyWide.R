@@ -1,12 +1,9 @@
 
 #' @title hierarchyWide
-#' @description This function takes employee and supervisor
-#' identifiers (name, ID, etc.) and returns a wide data frame consisting of
-#' a single row per employee and their respective reporting hierarchy in a wide format.
-#'
-#' The resulting format is very useful for subsequent aggregation of employee data
-#' for a particular leadership tree.
-#'
+#' @description This function transforms a standard set of employee 
+#' and supervisor identifiers into a wide format with complete hierarchies. 
+#' The resulting data can be aggregated by a particular person (i.e. include 
+#' everyone who rolls up to "Julie") to include all direct and indirect reports.
 #' @param ee A list of values representing employees (e.g. employee IDs).
 #' @param supv A list of values representing the supervisors of the employees. These values should be
 #' of the same type as the employee values.
@@ -20,13 +17,30 @@
 
 hierarchyWide = function(ee,supv){
 
+  # Validate character type for inputs
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
+  
+  # Ensure the inputs are the same type
   if(class(ee)!=class(supv)){
+    
     stop("Employee and supervisor inputs are different data types.")
+  
+  # Ensure the inputs are of equal length
+  }else if(
+    sum(is.na(ee)) > 0 |
+    sum(is.na(supv)) >0
+  ){
+    
+    stop("Missing values exist.")
+    
+  # Ensure the inputs are of equal length
   }else if(length(ee)!=length(supv)){
+  
     stop("Employee and supervisor inputs are of different lengths.")
-  }else{
+    
+    }else{
+    
     df = data.frame(ee,supv,stringsAsFactors=F)
     
     tryCatch(
