@@ -16,10 +16,11 @@ of the same type as the employee values.}
 data frame
 }
 \description{
-This function transforms a standard set of employee 
-and supervisor identifiers into a wide format with complete hierarchies. 
-The resulting data can be aggregated by a particular person (i.e. include 
-everyone who rolls up to "Julie") to include all direct and indirect reports.
+The hierarchyWide function transforms a standard set of unique employee and supervisor
+identifiers into a wide format that can be used to aggregate employee data by a particular line
+of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame
+with an additional column for every level in the hierarchy, starting from the top of the
+tree (i.e. "Supv1" is the CEO in your organization).
 }
 \examples{
 ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
