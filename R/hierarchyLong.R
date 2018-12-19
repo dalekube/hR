@@ -42,7 +42,7 @@ hierarchyLong = function(ee,supv){
 
   }else{
 
-    df = data.frame(ee,supv,stringsAsFactors=F)
+    df = data.table(ee,supv)
     tryCatch(
       {tree = FromDataFrameNetwork(df)},
       error=function(cond){
@@ -51,21 +51,21 @@ hierarchyLong = function(ee,supv){
       finally={
         if(tree$height>2){
           x = 3:tree$height
-          df[,x] = ""
+          df[,make.names(x):=""]
           for(w in x){
             for(i in 1:nrow(df)){
-              y = df$supv[df$ee==df[i,w-1]]
-              df[i,w] = ifelse(length(y)>0,y,NA)
+              n = df[i,(w-1),with=F][[1]]
+              y = df[ee==n,supv]
+              df[i,(w):=ifelse(length(y)>0,y,NA)]
             }
           }
         }
         z = 2:ncol(df)
         colnames(df)[z] = z-1
-        df = as.data.table(df)
         df = melt.data.table(df,id.vars=1)
         colnames(df) = c("Employee","Level","Supervisor")
-        df = df[!is.na(df$Supervisor)]
-        df = df[order(df$Employee,df$Level)]
+        df = df[!is.na(Supervisor)]
+        setorder(df,Employee,Level)
         df = as.data.frame(df)
         return(df)
       }
