@@ -1,6 +1,6 @@
 
 #' @title hierarchyLong
-#' @description The hierarchyLong function transforms a standard set of employee and
+#' @description The hierarchyLong function transforms a standard set of unique employee and
 #' supervisor identifiers into a long format that can be used to aggregate employee data
 #' by a particular line of leadership (i.e. include everyone who rolls up to Susan). The
 #' function returns a long data frame consisting of one row per employee for every supervisor
