@@ -13,62 +13,62 @@
 #' @export
 #' @return data frame
 #' @examples
-#' ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
-#' supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+#' ee = c("Dale@hR.com","Bob@hR.com","Jill@hR.com","Mark@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
+#' supv = c("Julie@hR.com","Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com","Susan@hR.com","George@hR.com")
 #' hierarchyLong(ee,supv)
 
 hierarchyLong = function(ee,supv){
-
+  
   if(is.factor(ee)) ee = as.character(ee)
   if(is.factor(supv)) supv = as.character(supv)
-
+  
   # Ensure the inputs are the same type
   if(class(ee)!=class(supv)){
-
+    
     stop("Employee and supervisor inputs are different data types.")
-
-  # Ensure the inputs are of equal length
+    
+    # Ensure the inputs are of equal length
   }else if(
     sum(is.na(ee)) > 0 |
     sum(is.na(supv)) >0
   ){
-
+    
     stop("Missing values exist.")
-
-  # Ensure the inputs are of equal length
+    
+    # Ensure the inputs are of equal length
   }else if(length(ee)!=length(supv)){
-
+    
     stop("Employee and supervisor inputs are of different lengths.")
-
+    
   }else{
-
-    df = data.table(ee,supv)
+    
+    df = data.frame(ee,supv,stringsAsFactors=F)
     tryCatch(
       {tree = FromDataFrameNetwork(df)},
       error=function(cond){
         message("The network is not a tree! Make sure the data reflects complete, unbroken tree of employees and supervisors.")
-        },
+      },
       finally={
         if(tree$height>2){
           x = 3:tree$height
-          df[,make.names(x):=""]
+          df[,x] = ""
           for(w in x){
             for(i in 1:nrow(df)){
-              n = df[i,(w-1),with=F][[1]]
-              y = df[ee==n,supv]
-              df[i,(w):=ifelse(length(y)>0,y,NA)]
+              y = df$supv[df$ee==df[i,w-1]]
+              df[i,w] = ifelse(length(y)>0,y,NA)
             }
           }
         }
         z = 2:ncol(df)
         colnames(df)[z] = z-1
+        df = as.data.table(df)
         df = melt.data.table(df,id.vars=1)
         colnames(df) = c("Employee","Level","Supervisor")
-        df = df[!is.na(Supervisor)]
-        setorder(df,Employee,Level)
+        df = df[!is.na(df$Supervisor)]
+        df = df[order(df$Employee,df$Level)]
         df = as.data.frame(df)
         return(df)
       }
-      )
+    )
   }
 }
