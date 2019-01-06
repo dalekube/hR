@@ -1,12 +1,12 @@
 
 #' @title hierarchyWide
 #' @description The hierarchyWide function transforms a standard set of unique employee and supervisor
-#' identifiers into a wide format that can be used to aggregate employee data by a particular line
-#' of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame
-#' with an additional column for every level in the hierarchy, starting from the top of the
-#' tree (i.e. "Supv1" is the CEO in your organization).
-#' @param ee A list of values representing employees (e.g. employee IDs).
-#' @param supv A list of values representing the supervisors of the employees. These values should be
+#' identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate 
+#' employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The 
+#' function returns a wide data frame with a column for every level in the hierarchy, 
+#' starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
+#' @param ee An array containing unique identifers for employees.
+#' @param supv An array containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @import data.tree
 #' @export
