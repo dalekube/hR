@@ -14,8 +14,8 @@
 #' @export
 #' @return data frame
 #' @examples
-#' ee = c("Dale@hR.com","Bob@hR.com","Jill@hR.com","Mark@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
-#' supv = c("Julie@hR.com","Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com","Susan@hR.com","George@hR.com")
+#' ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
+#' supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
 #' hierarchyLong(ee,supv)
 
 hierarchyLong = function(ee,supv){

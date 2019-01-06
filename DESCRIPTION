@@ -1,7 +1,7 @@
 Package: hR
 Type: Package
 Title: An HR Analytics Toolkit
-Version: 0.1.5
+Version: 0.1.6
 Author: Dale Kube [aut, cre]
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
 Maintainer: Dale Kube <dkube@uwalumni.com>
