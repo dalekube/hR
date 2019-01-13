@@ -7,26 +7,25 @@
 hierarchyLong(ee, supv)
 }
 \arguments{
-\item{ee}{A list of values representing employees (e.g. employee IDs).}
+\item{ee}{An array containing unique identifers for employees.}
 
-\item{supv}{A list of values representing the supervisors of the 
-employees. These values should be of the same data type as the employee values.}
+\item{supv}{An array containing unique identifiers for supervisors. These values should be
+of the same type as the employee values.}
 }
 \value{
 data frame
 }
 \description{
-This function transforms a standard set of 
-employee and supervisor identifiers into a long format representing
-full hierarchies. This is especially useful for narrowing in on a 
-subset of the workforce that reports up to a single person. The 
-function returns a long data frame consisting of one row per employee 
-for every supervisor above them, up to the CEO. The levels represent 
-the number of supervisors from the employee (starting with "1" for 
-an employee's direct supervisor).
+The hierarchyLong function transforms a standard set of unique employee and
+supervisor identifiers (employee IDs, email addresses, etc.) into a long format that can be 
+used to aggregate employee data by a particular line of leadership (i.e. include everyone who 
+rolls up to Susan). The function returns a long data frame consisting of one row per employee 
+for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization).
+The levels represent the number of supervisors from the employee (starting with "1" for an 
+employee's direct supervisor).
 }
 \examples{
-ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
-supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
+supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
 hierarchyLong(ee,supv)
 }

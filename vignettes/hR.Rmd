@@ -1,10 +1,10 @@
 ---
-title: "hR: An HR Analytics Toolkit"
+title: "hR: Toolkit for Data Analytics in Human Resources"
 author: "Dale Kube"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{hR Vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,44 +17,40 @@ knitr::opts_chunk$set(
 )
 ```
 
-The 'hR' package serves as a toolkit for data analysts, data scientists, and other analytics practitioners who address workforce-related problems. The goal of the package is to provide functions for manipulating, analyzing, and visualizing people data in meaningful ways. Two functions are currently available, and more are on the way!  
+The `hR` package serves as a toolkit for data analysts, data scientists, and other analytics practitioners who address workforce-related problems. The goal of the package is to provide functions for manipulating, analyzing, and visualizing people data in meaningful ways. Two functions are currently available, and more are on the way!  
 
 Install the package from CRAN by running the `install.packages("hR")` command.
 
 
 ## hierarchyLong
 
-The hierarchyLong function transforms a standard set of unique employee and supervisor identifiers into a long format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization). The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
+The `hierarchyLong` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a long format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization). The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
 
-```{r}
-ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
-supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+```{r hierarchyLong}
+ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
+supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
 df = hierarchyLong(ee,supv)
 print(df)
 
 # How many employees report up through Susan?
-nrow(df[df$Supervisor=="Susan",])
+nrow(df[df$Supervisor=="Susan@hR.com",])
 
 # Who reports up through Susan?
-df[df$Supervisor=="Susan",]
+df[df$Supervisor=="Susan@hR.com",]
 ```
 
 
 ## hierarchyWide
 
-The hierarchyWide function transforms a standard set of unique employee and supervisor identifiers into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame with an additional column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is the CEO in your organization).
+The `hierarchyWide` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame with a column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
 
-```{r}
-ee = c("Dale","Bob","Jill","Mark","Julie","Andrea","Susan")
-supv = c("Julie","Julie","Julie","Andrea","Susan","Susan","George")
+```{r hierarchyWide}
 df = hierarchyWide(ee,supv)
 print(df)
 
 # How many employees report up through Susan?
-sum(df$Supv2=="Susan",na.rm=T)
+sum(df$Supv1=="Susan@hR.com",na.rm=T)
 
 # Who reports up through Susan?
-df[which(df$Supv2=="Susan"),]
+df[which(df$Supv1=="Susan@hR.com"),]
 ```
-
-
