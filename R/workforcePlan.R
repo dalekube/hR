@@ -17,6 +17,7 @@ workforcePlan = function(plan){
   require(rhandsontable)
   require(data.table)
   require(shinyWidgets)
+  require(shinydashboard)
   require(knitr)
   
   # Define initial data frame to store all sheet attributes
@@ -52,7 +53,8 @@ workforcePlan = function(plan){
         .fixedWidth {width:750px;}
         .rhandsontable {overflow:visible}
         body {min-height:1500px;}
-        td {padding-right:15px;width:auto;}
+        td {padding-right:15px;width:auto;white-space:nowrap !important;}
+        .colHeader {white-space:nowrap !important;}
         .col-sm-3 {width:auto;}"
       )),
       
@@ -67,6 +69,7 @@ workforcePlan = function(plan){
         within their team and fill in desired headcounts. This leads to pragmatic and useful calculations that provide insight into hiring needs, 
         expected turnover, and other factors that contribute to the successful management of a high-performing team."
         ),
+      br(),
       
       # Button to save the worksheet
       div("Don't forget to periodically save your work!",style="color:red;"),
@@ -119,13 +122,11 @@ workforcePlan = function(plan){
       ),
       br(),
       rHandsontableOutput("hot"),
-      br(),
-      br(),
       
       hr(),
       
       # Step 3: Calculate Hiring & Expected Turnover
-      h4("Step 3: Calculate Expected Hiring & Turnover"),
+      h3("Step 3: Calculate Expected Hiring & Turnover"),
       p(
         class="fixedWidth",
         "Press the 'Calculate' button to calculate hiring needs and expected turnover for
