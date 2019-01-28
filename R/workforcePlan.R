@@ -1,16 +1,13 @@
 
 #' @title workforcePlan
-#' @description Launch an interactive workforce planning worksheet that helps
-#' team leaders and managers to plan for hiring and other changes to the workforce.
-#' @param file The name of an existing data set from a workforcePlan. If an existing data set does
-#' not exist, a new workforcePlan will be created from scratch.
+#' @description Launch an interactive workforce planning worksheet that helps managers and
+#' team leaders to execute basic workforce planning tasks and plan ahead.
 #' @import shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
 #' @export
 #' @examples
 #' workforcePlan()
 
 workforcePlan = function(){
-  
   
   # Load necessary packages
   require(shiny)
@@ -60,9 +57,9 @@ workforcePlan = function(){
       # Description paragraph
       p(
         class="fixedWidth",
-        "This interactive, open-source workforce planning worksheet is designed to support people managers and team leaders
-        who are responsible for recruitment, team strategy, and business forecasting. Users are able to indicate the roles 
-        within their team and fill in desired headcounts. This leads to pragmatic and useful calculations that provide insight into hiring needs, 
+        "This interactive, open-source workforce planning worksheet allows people managers and team leaders to execute basic
+        workforce planning tasks that support recruitment, team strategy, and business forecasting. Users must indicate the roles 
+        within their team and monthly desired headcounts. This leads to pragmatic calculations which provide insight into hiring needs, 
         expected turnover, and other factors that contribute to the successful management of a high-performing team."
       ),
       br(),
@@ -459,11 +456,11 @@ workforcePlan = function(){
                 div(
                   class="metricsBox2 smallPad",
                   style="background-color:#85C1E9;",
-                  "Expected Headcount Change"
+                  "Expected 12-Month Headcount Change"
                 ),
                 div(
                   class="smallPad",
-                  HTML(kable(h,col.names=NULL,format="html",escape=F))
+                  HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
                 )
                 
               )
