@@ -4,31 +4,23 @@
 #' team leaders and managers to plan for hiring and other changes to the workforce.
 #' @param file The name of an existing data set from a workforcePlan. If an existing data set does
 #' not exist, a new workforcePlan will be created from scratch.
-#' @import shiny
+#' @import shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
 #' @export
 #' @examples
-#' workforcePlan(plan="test.rds")
+#' workforcePlan()
 
-workforcePlan = function(plan){
+workforcePlan = function(){
+  
   
   # Load necessary packages
   require(shiny)
-  require(shinyjs)
   require(rhandsontable)
   require(data.table)
-  require(shinyWidgets)
-  require(shinydashboard)
   require(knitr)
+  require(shinyjs)
+  require(shinyFiles)
   
-  # Define initial data frame to store all sheet attributes
-  plan=paste0(plan,".rds")
-  if(file.exists(plan)){
-    load(plan)
-    selected=sort(DF$Role[DF$Role!="Total"])
-    
-  }else{
-    selected=NULL
-  }
+  # Define initial date attributes
   current = as.POSIXlt(Sys.Date())
   first.month = current$mon+1
   first.month = sprintf("%02d",first.month)
@@ -45,48 +37,60 @@ workforcePlan = function(plan){
       
       # Boilerplate Code
       useShinyjs(),
-      useShinydashboard(),
-      tags$title("hR: Workforce Planning Worksheet"),
+      tags$title("hR: Workforce Planning"),
       tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
       tags$style(HTML(
-        ".fa-check {color:green;}
+        ".fa-check, .fa-save {color:green;}
         .fixedWidth {width:750px;}
-        .rhandsontable {overflow:visible}
+        .rhandsontable {overflow:visible;}
         body {min-height:1500px;}
         td {padding-right:15px;width:auto;white-space:nowrap !important;}
         .colHeader {white-space:nowrap !important;}
-        .col-sm-3 {width:auto;}"
+        .col-sm-3 {width:auto;}
+        #saveFile {margin-left:15px;}
+        #Calculate {margin-bottom:10px;}
+        .metricsBox1 {width:auto;height:auto;display:inline-block;border-radius:5px;margin:10px;}
+        .metricsBox2 {color:white;width:auto;font-size:20px;}
+        .smallPad {padding:5px;}"
       )),
       
       # Header
       h2("Workforce Planning Worksheet"),
-
+      
       # Description paragraph
       p(
         class="fixedWidth",
-        "This interactive, open-source workforce planning worksheet is designed for people managers and team leaders
+        "This interactive, open-source workforce planning worksheet is designed to support people managers and team leaders
         who are responsible for recruitment, team strategy, and business forecasting. Users are able to indicate the roles 
         within their team and fill in desired headcounts. This leads to pragmatic and useful calculations that provide insight into hiring needs, 
         expected turnover, and other factors that contribute to the successful management of a high-performing team."
-        ),
+      ),
       br(),
       
-      # Button to save the worksheet
-      div("Don't forget to periodically save your work!",style="color:red;"),
-      actionButton(
-        inputId="save",
-        label="Save Worksheet",
-        icon=icon("save")
+      shinyFilesButton(
+        id="chooseFile",
+        label="Load Existing Worksheet",
+        title="Choose an existing worksheet...",
+        multiple=F,
+        icon=icon("file-upload")
       ),
+      
+      # Button to save the worksheet
+      shinySaveButton(
+        id="saveFile",
+        label='Save the Worksheet', 
+        icon=icon("save"),
+        title='Save as...',
+        filetype=list(text=".rds")
+      ),
+      
+      # Confirmation message presented when a worksheet saves
       hidden(
         tags$i(
           id='saveIcon',
           class='fas fa-spinner fa-spin'
         ),
-        span(
-          id="savePlan",
-          HTML(paste0("Worksheet saved as <b>",plan,"</b>"))
-        )
+        span(id="savePlan")
       ),
       
       hr(),
@@ -99,17 +103,7 @@ workforcePlan = function(plan){
         (2) the roles that will exist in the next 12 months. This ensures that you are
         planning ahead for all roles in your team. Each entry will create a new row in the table in Step 2."
       ),
-      selectizeInput(
-        inputId="TypeRoles",
-        label="Type-In Roles",
-        multiple=T,
-        choices=selected,
-        selected=selected,
-        options=list(
-          create=T,
-          plugins=list('remove_button','drag_drop')
-          )
-      ),
+      uiOutput("TypeRolesUI"),
       hr(),
       
       # Step 2: Add Desired Headcounts
@@ -118,65 +112,189 @@ workforcePlan = function(plan){
         class="fixedWidth",
         "Type-in the desired headcounts, which should reflect the number of employees,
         or FTEs, in each role at the start of the month (i.e. I need three associates working
-        in my team at the start of August in order to properly manage the portfolio)."
+        in my team at the start of August in order to properly manage the portfolio).",
+        strong("Don't forget to periodically save your worksheet!")
       ),
       br(),
       rHandsontableOutput("hot"),
       
       hr(),
       
-      # Step 3: Calculate Hiring & Expected Turnover
-      h3("Step 3: Calculate Expected Hiring & Turnover"),
+      # Step 3: Calculate Change Metrics
+      h3("Step 3: Calculate Change Metrics"),
       p(
         class="fixedWidth",
-        "Press the 'Calculate' button to calculate hiring needs and expected turnover for
-        the next 12 months. Use this data to plan ahead and develop an effective talent stratey.
+        "Press the 'Calculate' button to calculate relevant change metrics which help to plan ahead for
+        the next 12 months. Use this data to develop an effective talent stratey.
         The calculations consider the headcounts in the previous table."
       ),
-      actionButton(
-        inputId="Calculate",
-        label="Calculate",
-        icon=icon("calculator")
+      uiOutput("calculateUI"),
+      div(
+        style="display:flex;align-items:top;margin-top:10px;",
+        uiOutput("NoChangeAlert"),
+        uiOutput("hires"),
+        uiOutput("turnover"),
+        uiOutput("headChange")
       ),
-      br(),
-      br(),
-      uiOutput("hires",inline=T),
-      uiOutput("turnover",inline=T)
+      hr(style="margin-top:75px;"),
       
-      ),
+      # Footer
+      div(
+        class="fixedWidth",
+        HTML(
+          "This app was created by Dale Kube, author and maintainer of the
+          'hR' package in R (<a href='https://cran.r-project.org/web/packages/hR/index.html' target='_blank'>CRAN</a>).
+          You may contact Dale at <a href='mailto:dkube@uwalumni.com' target='_top'>dkube@uwalumni.com</a>. Consider making
+          a small donation to show your support!<br>
+          
+          <br>
+          <form action='https://www.paypal.me/DaleKube' target='_blank'>
+          <input type='hidden' name='cmd' value='_donations' />
+          <input type='hidden' name='currency_code' value='USD' />
+          <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit' title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' />
+          <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
+          </form>
+          "
+        )
+        )
+      
+        ),
     
     # Server client
-    server = function(input, output) {
+    server = function(input,output,session) {
       
       x = reactiveValues()
+      roots = c("wd"=".")
+      shinyFileChoose(input,"chooseFile",roots=roots,filetypes=c("rds"),defaultRoot="wd")
+      shinyFileSave(input,"saveFile",roots=roots,defaultRoot="wd")
       
-      # IF DF exists, save as x$df to initialize first table
-      if(exists("DF")){
-        x$df = DF
-      }
-      
-      observeEvent(input$save,{
+      # Render the handsontable
+      getTable = reactive({
         
-        if(!is.null(input$TypeRoles)){
+        # Render the table
+        output$hot = renderRHandsontable({
           
-          DF = hot_to_r(input$hot)
-          show("saveIcon")
-          save(DF,file=plan)
-          Sys.sleep(1)
-          show("savePlan")
-          removeClass("saveIcon","fa-spinner fa-spin")
-          addClass("saveIcon","fa-check")
-          Sys.sleep(3)
-          hide("savePlan")
-          hide("saveIcon")
-          removeClass("saveIcon","fa-check")
-          addClass("saveIcon","fa-spinner fa-spin")
+          m = x$n-1
+          if(nrow(x$df)>1){
+            
+            renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
+                             Handsontable.renderers.TextRenderer.apply(this, arguments);
+                             if (col==0 & row!=",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';} 
+                             else if (row==",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='center';td.style.fontWeight='bold';cellProperties.readOnly='true';} 
+                             else {td.align='center';}}
+                             ")
+            
+        }else{
+          
+          renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
+                           Handsontable.renderers.TextRenderer.apply(this, arguments);
+                           if (col==0) {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';}
+                           else {td.align='center';}}
+                           ")
+          
+      }
+          
+          
+          rhandsontable(x$df) %>%
+            hot_cols(renderer=renderer)
+          
+    })
+        
+        # Present the Calculate button if records exist in the table
+        if(nrow(x$df)>0){
+          
+          output$calculateUI = renderUI({
+            
+            actionButton(
+              inputId="Calculate",
+              label="Calculate",
+              icon=icon("calculator")
+            )
+            
+          })
+          
+        }else{
+          
+          output$calculateUI = renderUI({""})
+          
+        }
+        
+    })
+      
+      # Load Existing Worksheet
+      observeEvent(input$chooseFile,{
+        
+        x$fileinfo = parseFilePaths(roots,input$chooseFile)
+        if(nrow(x$fileinfo)>0){
+          load(file=as.character(x$fileinfo$datapath))
+          x$df = DF
+          x$selected = DF$Role[DF$Role!="Total"]
+          x$n = nrow(x$df)
+          
+          updateSelectizeInput(
+            session=session,
+            inputId="TypeRoles",
+            choices=x$selected,
+            selected=x$selected
+          )
+          
+          # Render the handsontable
+          getTable()
+        }
+        
+      })
+      
+      # Save Worksheet
+      observeEvent(input$saveFile,{
+        
+        x$fileinfo = parseSavePath(roots,input$saveFile)
+        
+        if(nrow(x$fileinfo)>0){
+          
+          if(!is.null(input$TypeRoles)){
+            
+            DF = hot_to_r(input$hot)
+            show("saveIcon")
+            save(DF,file=as.character(x$fileinfo$datapath))
+            Sys.sleep(1)
+            html("savePlan",paste0("Worksheet saved as <b>",x$fileinfo$name,"</b>"))
+            show("savePlan")
+            removeClass("saveIcon","fa-spinner fa-spin")
+            addClass("saveIcon","fa-check")
+            Sys.sleep(5)
+            hide("savePlan")
+            hide("saveIcon")
+            removeClass("saveIcon","fa-check")
+            addClass("saveIcon","fa-spinner fa-spin")
+            
+          }
           
         }
         
       })
       
-      # Render the table and add roles when entered
+      # Role Input UI
+      observe({
+        
+        output$TypeRolesUI = renderUI({
+          
+          selectizeInput(
+            inputId="TypeRoles",
+            label="Type-In Roles",
+            multiple=T,
+            choices=x$selected,
+            selected=x$selected,
+            options=list(
+              create=T,
+              plugins=list('remove_button','drag_drop')
+            )
+          )
+          
+        })
+        
+      })
+      
+      # Account for role additions and removals
       observeEvent(input$TypeRoles,{
         
         x$roles = input$TypeRoles
@@ -189,62 +307,49 @@ workforcePlan = function(plan){
           df.add = data.frame(Role=x$roles_add,stringsAsFactors=F)
           df.add[mns] = 0
           x$df = rbind(x$df,df.add)
-        
+          
         }
         
         # Account for removed roles
         x$df = x$df[x$df$Role %in% x$roles,]
         
-        totals = lapply(x$df[-1],as.numeric)
-        totals = c("Role"="Total",colSums(as.data.frame(totals)))
-        x$df = rbind(x$df,totals)
-        n = nrow(x$df)
-        row.names(x$df) = NULL
-        row.names(x$df)[n] = ""
+        # Add totals if there are multiple roles
+        if(nrow(x$df)>1){
+          
+          totals = sapply(x$df[-1],as.numeric)
+          totals = c("Role"="Total",colSums(totals))
+          x$df = rbind(x$df,totals)
+          x$n = nrow(x$df)
+          row.names(x$df) = NULL
+          row.names(x$df)[x$n] = ""
+          
+        }
         
-        output$hot = renderRHandsontable({
-          
-          rhandsontable(x$df) %>%
-            hot_col("Role",readOnly=TRUE) %>%
-            hot_row(row=n,readOnly=TRUE) %>%
-            hot_cols(renderer = paste("
-                                      function (instance, td, row, col, prop, value, cellProperties) {
-                                      Handsontable.renderers.TextRenderer.apply(this, arguments);
-                                      if (col==0 & row!=",n-1,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';} 
-                                      else if (row==",n-1,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='center';td.style.fontWeight='bold';} 
-                                      else {td.align='center';}}
-                                      "))
-          
-        })
+        # Render the handsontable
+        x$n = nrow(x$df)
+        getTable()
         
       })
       
+      # Account for changes to the hot table
       observeEvent(input$hot,{
         
-        # Add totals
+        # Add totals if there are multiple roles
         x$new = hot_to_r(input$hot)
         x$new = x$new[x$new$Role!="Total",]
-        totals = lapply(x$new[-1],as.numeric)
-        totals = c("Role"="Total",colSums(as.data.frame(totals)))
-        x$df = rbind(x$new,totals)
-        n = nrow(x$df)
-        row.names(x$df) = NULL
-        row.names(x$df)[n] = ""
+        if(nrow(x$new)>1){
+          
+          totals = sapply(x$new[-1],as.numeric)
+          totals = c("Role"="Total",colSums(totals))
+          x$df = rbind(x$new,totals)
+          x$n = nrow(x$df)
+          row.names(x$df) = NULL
+          row.names(x$df)[x$n] = ""
+          
+        }
         
-        output$hot = renderRHandsontable({
-          
-          rhandsontable(x$df) %>%
-            hot_col("Role",readOnly=TRUE) %>%
-            hot_row(row=n,readOnly=TRUE) %>%
-            hot_cols(renderer = paste("
-                                      function (instance, td, row, col, prop, value, cellProperties) {
-                                      Handsontable.renderers.TextRenderer.apply(this, arguments);
-                                      if (col==0 & row!=",n-1,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';} 
-                                      else if (row==",n-1,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='center';td.style.fontWeight='bold';} 
-                                      else {td.align='center';}}
-                                      "))
-          
-        })
+        # Render the handsontable
+        getTable()
         
       })
       
@@ -256,66 +361,140 @@ workforcePlan = function(plan){
         m = t(m[-1])
         colnames(m) = cols
         m = data.table(m,keep.rownames=T)
-        m[,Total:=NULL]
+        if("Total" %in% cols){
+          m[,Total:=NULL]
+        }
+        h = m[c(1,nrow(m)),-1]
         cols = colnames(m)[-1]
         m[,(cols):=lapply(.SD,as.numeric),.SDcols=cols]
         m[,(cols):=lapply(.SD,function(z) z-c(NA,z[-.N])),.SDcols=cols]
         m = melt.data.table(m,na.rm=T,id.vars="rn")
         m = m[value!=0]
-        m[,variable:=paste0("<span title='",variable,"'>",variable,"</span>")]
         
-        # expected hires
-        hires = m[value>0]
-        if(nrow(hires)>0){
+        if(nrow(m)>0){
           
-          output$hires = renderUI({
-
-              box(
-                solidHeader=T,
-                title="Expected Hires",
-                status="success",
-                width=3,
-                HTML(kable(hires,col.names=NULL,format="html",escape=F))
-              )
+          output$NoChangeAlert = renderUI({""})
+          m[,variable:=paste0("<span title='",variable,"'>",variable,"</span>")]
+          
+          # expected hires
+          hires = m[value>0]
+          if(nrow(hires)>0){
             
-          })
+            output$hires = renderUI({
+              
+              div(
+                class="metricsBox1",
+                style="border: thin #52BE80 solid;",
+                div(
+                  class="metricsBox2 smallPad",
+                  style="background-color:#52BE80;",
+                  "Expected Hires"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(hires,col.names=NULL,format="html",escape=F))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$hires = renderUI({""})
+            
+          }
+          
+          # expected turnover
+          turnover = m[value<0]
+          
+          if(nrow(turnover)>0){
+            
+            output$turnover = renderUI({
+              
+              div(
+                class="metricsBox1",
+                style="border: thin #F5B041 solid;",
+                div(
+                  class="metricsBox2 smallPad",
+                  style="background-color:#F5B041;",
+                  "Expected Turnover"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(turnover,col.names=NULL,format="html",escape=F))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$turnover = renderUI({""})
+            
+          }
+          
+          # Headcount change
+          h = as.data.frame(t(h),stringsAsFactors=F)
+          h$V1 = as.numeric(h$V1)
+          h$V2 = as.numeric(h$V2)
+          h$Change = h$V2-h$V1
+          h$Percent = 100*(h$Change/h$V1)
+          h$Role = row.names(h)
+          h = h[h$Change!=0,]
+          
+          if(nrow(h)>0){
+            
+            h$Percent = sprintf("%1.1f%%",h$Percent)
+            h$Sign = ifelse(h$Change>0,"+","")
+            h$Percent = paste0("(",h$Sign,h$Percent,")")
+            h = h[c("Role","Change","Percent")]
+            
+            output$headChange = renderUI({
+              
+              div(
+                class="metricsBox1",
+                style="border: thin #85C1E9 solid;",
+                div(
+                  class="metricsBox2 smallPad",
+                  style="background-color:#85C1E9;",
+                  "Expected Headcount Change"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(h,col.names=NULL,format="html",escape=F))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$headChange = renderUI({""})
+            
+          }
           
         }else{
           
           output$hires = renderUI({""})
-          
-        }
-        
-        # expected turnover
-        turnover = m[value<0]
-        
-        if(nrow(turnover)>0){
-          
-          output$turnover = renderUI({
-
-              box(
-                solidHeader=T,
-                status="warning",
-                title="Expected Turnover",
-                width=3,
-                HTML(kable(turnover,col.names=NULL,format="html",escape=F))
-              )
+          output$turnover = renderUI({""})
+          output$headChange = renderUI({""})
+          output$NoChangeAlert = renderUI({
+            
+            div(
+              style="color:red;",
+              "There aren't any changes in headcounts. There is nothing to analyze."
+            )
             
           })
-          
-        }else{
-          
-          output$turnover = renderUI({""})
           
         }
         
       })
       
-    }
-    
-  )
+        }
+      )
   
 }
-
-setwd("C:/Users/Dale/Downloads")
-workforcePlan(plan="dales-team-2019")

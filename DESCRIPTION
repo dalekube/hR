@@ -5,14 +5,15 @@ Version: 0.1.7
 Author: Dale Kube [aut, cre]
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
 Maintainer: Dale Kube <dkube@uwalumni.com>
-Description: Transform employee data in meaningful ways. Two functions, 'hierarchyLong' and
+Description: Transform and analyze workforce data in meaningful ways. Two functions, 'hierarchyLong' and
     'hierarchyWide', convert standard employee and supervisor relationship data
-    into useful formats for human resources (HR) analytics.
+    into useful formats for human resources (HR) analytics. A 'workforcePlan' shiny app
+    is available for supporting people managers and team leaders through the workforce planning process.
 BugReports: https://github.com/dalekube/hR
 Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: data.tree, data.table
+Imports: data.tree, data.table, shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
