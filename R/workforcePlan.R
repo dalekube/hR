@@ -10,12 +10,12 @@
 workforcePlan = function(){
   
   # Load necessary packages
-  require(shiny)
-  require(rhandsontable)
-  require(data.table)
-  require(knitr)
-  require(shinyjs)
-  require(shinyFiles)
+  suppressMessages(library(shiny))
+  suppressMessages(library(rhandsontable))
+  suppressMessages(library(data.table))
+  suppressMessages(library(knitr))
+  suppressMessages(library(shinyjs))
+  suppressMessages(library(shinyFiles))
   
   # Define initial date attributes
   current = as.POSIXlt(Sys.Date())
@@ -34,6 +34,7 @@ workforcePlan = function(){
       
       # Boilerplate Code
       useShinyjs(),
+      tags$meta(name="viewport",content="width=750"),
       tags$title("hR: Workforce Planning"),
       tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
       tags$style(HTML(
