@@ -2,22 +2,23 @@
 #' @title workforcePlan
 #' @description Launch a simple, interactive workforce planning worksheet that helps managers and
 #' team leaders to execute basic workforce planning tasks and plan ahead for hiring, turnover, and other
-#' factors that influence a team's talent structure. Data analysts can use this, in conjunction with
-#' team leaders, to convey change and help others to proactively think about recruitment, etc.
-#' @import shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
+#' factors that influence a team's talent structure. Data analysts can use this alongside
+#' team leaders to convey change and proactively think about recruitment, etc.
+#' @import shiny
+#' @import rhandsontable
+#' @import data.table
+#' @import knitr
+#' @importFrom shinyjs useShinyjs show hide removeClass addClass hidden html
+#' @import shinyFiles
 #' @export
 #' @examples
 #' workforcePlan()
 
 workforcePlan = function(){
-  
-  # Load necessary packages
-  suppressMessages(library(shiny))
-  suppressMessages(library(rhandsontable))
-  suppressMessages(library(data.table))
-  suppressMessages(library(knitr))
-  suppressMessages(library(shinyjs))
-  suppressMessages(library(shinyFiles))
+
+  value=NULL
+  variable=NULL
+  Total=NULL
   
   # Define initial date attributes
   current = as.POSIXlt(Sys.Date())
@@ -43,7 +44,7 @@ workforcePlan = function(){
         ".fa-check, .fa-save {color:green;}
         .fixedWidth {width:750px;}
         .rhandsontable {overflow:visible;}
-        body {min-height:1500px;margin:25px;}
+        body {min-height:1200px;margin:25px;}
         td {padding-right:15px;width:auto;white-space:nowrap !important;}
         .colHeader {white-space:nowrap !important;}
         .col-sm-3 {width:auto;}
@@ -135,30 +136,8 @@ workforcePlan = function(){
         uiOutput("hires"),
         uiOutput("turnover"),
         uiOutput("headChange")
+      )
       ),
-      hr(style="margin-top:75px;"),
-      
-      # Footer
-      div(
-        class="fixedWidth",
-        HTML(
-          "This app was created by Dale Kube, author and maintainer of the
-          'hR' package in R (<a href='https://cran.r-project.org/web/packages/hR/index.html' target='_blank'>CRAN</a>).
-          You may contact Dale at <a href='mailto:dkube@uwalumni.com' target='_top'>dkube@uwalumni.com</a>. Consider making
-          a small donation to show your support!<br>
-          
-          <br>
-          <form action='https://www.paypal.me/DaleKube' target='_blank'>
-          <input type='hidden' name='cmd' value='_donations' />
-          <input type='hidden' name='currency_code' value='USD' />
-          <input type='image' src='https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif' border='0' name='submit' title='PayPal - The safer, easier way to pay online!' alt='Donate with PayPal button' />
-          <img alt='' border='0' src='https://www.paypal.com/en_US/i/scr/pixel.gif' width='1' height='1' />
-          </form>
-          "
-        )
-        )
-      
-        ),
     
     # Server client
     server = function(input,output,session) {

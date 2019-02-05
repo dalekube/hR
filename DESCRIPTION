@@ -14,6 +14,6 @@ Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: data.tree, data.table, shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
-Suggests: knitr, rmarkdown
+Imports: data.tree, data.table, shiny, rhandsontable, knitr, shinyjs, shinyFiles
+Suggests: rmarkdown
 VignetteBuilder: knitr
