@@ -1,7 +1,9 @@
 
 #' @title workforcePlan
-#' @description Launch an interactive workforce planning worksheet that helps managers and
-#' team leaders to execute basic workforce planning tasks and plan ahead.
+#' @description Launch a simple, interactive workforce planning worksheet that helps managers and
+#' team leaders to execute basic workforce planning tasks and plan ahead for hiring, turnover, and other
+#' factors that influence a team's talent structure. Data analysts can use this, in conjunction with
+#' team leaders, to convey change and help others to proactively think about recruitment, etc.
 #' @import shiny, rhandsontable, data.table, knitr, shinyjs, shinyFiles
 #' @export
 #' @examples
@@ -41,7 +43,7 @@ workforcePlan = function(){
         ".fa-check, .fa-save {color:green;}
         .fixedWidth {width:750px;}
         .rhandsontable {overflow:visible;}
-        body {min-height:1500px;}
+        body {min-height:1500px;margin:25px;}
         td {padding-right:15px;width:auto;white-space:nowrap !important;}
         .colHeader {white-space:nowrap !important;}
         .col-sm-3 {width:auto;}
@@ -58,7 +60,7 @@ workforcePlan = function(){
       # Description paragraph
       p(
         class="fixedWidth",
-        "This interactive, open-source workforce planning worksheet allows people managers and team leaders to execute basic
+        "This simple, interactive, and open-source workforce planning worksheet allows people managers and team leaders to execute basic
         workforce planning tasks that support recruitment, team strategy, and business forecasting. Users must indicate the roles 
         within their team and monthly desired headcounts. This leads to pragmatic calculations which provide insight into hiring needs, 
         expected turnover, and other factors that contribute to the successful management of a high-performing team."
