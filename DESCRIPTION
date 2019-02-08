@@ -8,7 +8,7 @@ Maintainer: Dale Kube <dkube@uwalumni.com>
 Description: Transform and analyze workforce data in meaningful ways. Two functions, 'hierarchyLong' and
     'hierarchyWide', convert standard employee and supervisor relationship data
     into useful formats for human resources (HR) analytics. A 'workforcePlan' shiny app
-    is available for simple workforce planning tasks.
+    is available for simple workforce planning.
 BugReports: https://github.com/dalekube/hR
 Encoding: UTF-8
 License: GPL

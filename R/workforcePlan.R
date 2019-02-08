@@ -8,15 +8,13 @@
 #' @import rhandsontable
 #' @import data.table
 #' @import knitr
-#' @importFrom shinyjs useShinyjs show hide removeClass addClass hidden html
 #' @import shinyFiles
+#' @importFrom shinyjs useShinyjs show hide removeClass addClass hidden html
 #' @export
-#' @examples
-#' workforcePlan()
 
 workforcePlan = function(){
   
-  appDir = system.file("shiny-workforcePlan",package="hR")
+  appDir = system.file("workforcePlanApp",package="hR")
   if(appDir==""){
     stop("Could not find example directory. Try re-installing `hR`.", call. = FALSE)
   }

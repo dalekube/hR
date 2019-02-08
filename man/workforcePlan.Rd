@@ -12,6 +12,3 @@ team leaders to execute basic workforce planning tasks and plan ahead for hiring
 factors that influence a team's talent structure. Data analysts can use this alongside
 team leaders to convey change and proactively think about recruitment, etc.
 }
-\examples{
-workforcePlan()
-}
