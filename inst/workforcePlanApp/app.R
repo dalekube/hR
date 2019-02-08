@@ -55,7 +55,7 @@ shinyApp(
     # Description paragraph
     p(
       class="fixedWidth",
-      "This simple, interactive, and open-source workforce planning worksheet allows people managers and team leaders to execute basic
+      "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
       workforce planning tasks that support recruitment, team strategy, and business forecasting. Users must indicate the roles 
       within their team and monthly desired headcounts. This leads to pragmatic calculations which provide insight into hiring needs, 
       expected turnover, and other factors that contribute to the successful management of a high-performing team."
