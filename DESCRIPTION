@@ -1,17 +1,19 @@
 Package: hR
 Type: Package
 Title: Toolkit for Data Analytics in Human Resources
-Version: 0.1.6
+Version: 0.1.7
 Author: Dale Kube [aut, cre]
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
 Maintainer: Dale Kube <dkube@uwalumni.com>
-Description: Transform employee data in meaningful ways. Two functions, 'hierarchyLong' and
-    'hierarchyWide', convert standard employee and supervisor relationship data
-    into useful formats for human resources (HR) analytics.
+Description: Transform and analyze workforce data in meaningful ways for 
+    human resources (HR) analytics. Two functions, 'hierarchyLong' and 'hierarchyWide', 
+    convert standard employee and supervisor relationship data into useful formats. 
+    A 'workforcePlan' app is available for simple workforce planning.
+BugReports: https://github.com/dalekube/hR
 Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: data.tree, data.table
-Suggests: knitr, rmarkdown
+Imports: data.tree, data.table, shiny, rhandsontable, knitr, shinyjs, shinyFiles
+Suggests: rmarkdown
 VignetteBuilder: knitr
