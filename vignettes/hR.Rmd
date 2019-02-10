@@ -9,6 +9,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110480958-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-110480958-3');
+</script>
+</head>
+
 ```{r setup, include = FALSE}
 library(hR)
 knitr::opts_chunk$set(
