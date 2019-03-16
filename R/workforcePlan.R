@@ -8,8 +8,7 @@
 #' @import shiny
 #' @import rhandsontable
 #' @import data.table
-#' @import knitr
-#' @importFrom shinyjs useShinyjs show hide removeClass addClass hidden html
+#' @importFrom knitr kable
 #' @export
 
 workforcePlan = function(launch.browser=T){

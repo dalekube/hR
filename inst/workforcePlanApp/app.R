@@ -4,7 +4,6 @@
 ## part of the hR package available in CRAN
 
 suppressMessages(library(shiny))
-suppressMessages(library(shinyjs))
 suppressMessages(library(rhandsontable))
 suppressMessages(library(data.table))
 suppressMessages(library(knitr))
@@ -29,13 +28,11 @@ shinyApp(
   ui = fluidPage(
     
     # Boilerplate Code
-    useShinyjs(),
     tags$meta(name="viewport",content="width=750"),
     tags$title("hR: Workforce Planning"),
     tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
     tags$style(HTML(
-      ".fa-check, .fa-save {color:green;}
-      .fixedWidth {width:750px;}
+      ".fixedWidth {width:750px;}
       .rhandsontable {overflow:visible;}
       body {min-height:1200px;margin:25px;}
       td {padding-right:15px;width:auto;white-space:nowrap !important;}
