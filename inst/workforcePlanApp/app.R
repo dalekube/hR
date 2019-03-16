@@ -7,7 +7,6 @@ suppressMessages(library(shiny))
 suppressMessages(library(shinyjs))
 suppressMessages(library(rhandsontable))
 suppressMessages(library(data.table))
-suppressMessages(library(shinyFiles))
 suppressMessages(library(knitr))
 
 # Initialize dummy global variables to pass CRAN tests
@@ -42,7 +41,6 @@ shinyApp(
       td {padding-right:15px;width:auto;white-space:nowrap !important;}
       .colHeader {white-space:nowrap !important;}
       .col-sm-3 {width:auto;}
-      #saveFile {margin-left:15px;}
       #Calculate {margin-bottom:10px;}
       .metricsBox1 {width:auto;height:auto;display:inline-block;border-radius:5px;margin:10px;}
       .metricsBox2 {color:white;width:auto;font-size:20px;}
@@ -61,31 +59,8 @@ shinyApp(
       expected turnover, and other factors that contribute to the successful management of a high-performing team."
     ),
     br(),
-    
-    # Select an existing worksheet file
-    shinyFilesButton(
-      id="chooseFile",
-      label="Load Existing Worksheet",
-      title="Choose an existing worksheet...",
-      multiple=FALSE,
-      icon=icon("file-upload")
-    ),
-    
-    # Button to save the worksheet
-    shinySaveButton(
-      id="saveFile",
-      label='Save the Worksheet', 
-      icon=icon("save"),
-      title='Save as...',
-      filetype=list(text=".rds")
-    ),
-    
-    # Confirmation message presented when a worksheet saves
-    hidden(
-      tags$i(id='saveIcon',class='fas fa-spinner fa-spin'),
-      span(id="savePlan")
-      ),
-    
+
+    fileInput("loadWorksheet",label="Load Existing Worksheet",accept=".rds",multiple=F),
     hr(),
     
     # Step 1: Define team roles
@@ -110,6 +85,7 @@ shinyApp(
     ),
     br(),
     rHandsontableOutput("hot"),
+    uiOutput("downloadButtonUI"),
     hr(),
     
     # Step 3: Calculate Change Metrics
@@ -128,6 +104,7 @@ shinyApp(
       uiOutput("turnover"),
       uiOutput("headChange")
     )
+    
   ),
   
   # Server client
@@ -135,9 +112,6 @@ shinyApp(
     
     # Define reactive variables and shinyFile objects
     x = reactiveValues()
-    roots = getVolumes()
-    shinyFileChoose(input,"chooseFile",roots=roots,filetypes=c("rds"))
-    shinyFileSave(input,"saveFile",roots=roots)
     
     # Render the handsontable
     getTable = reactive({
@@ -180,71 +154,61 @@ shinyApp(
           )
           
         })
+        
+        output$downloadButtonUI = renderUI({
+          
+          downloadButton('saveWorksheet','Save Worksheet',style="background-color:green;color:white;margin-top:10px;")
+          
+        })
+        
         }else{
+          
           output$calculateUI = renderUI({""})
+          output$downloadButtonUI = renderUI({""})
+          
         }
       
       })
     
     # Load Existing Worksheet
-    observeEvent(input$chooseFile,{
+    observeEvent(input$loadWorksheet,{
+        
+      # Load the worksheet file (".rds")
+      load(file=as.character(input$loadWorksheet$datapath))
       
-      x$fileinfo = parseFilePaths(roots,input$chooseFile)
-      if(nrow(x$fileinfo)>0){
-        
-        # Load the worksheet file (".rds")
-        load(file=as.character(x$fileinfo$datapath))
-        
-        # Remove old months
-        DF = DF[c(1,which(colnames(DF) %in% mns))]
-        
-        # Update reactive variables
-        x$df = DF
-        x$selected = DF$Role[DF$Role!="Total"]
-        x$n = nrow(x$df)
-        
-        # Update the role input
-        updateSelectizeInput(
-          session=session,
-          inputId="TypeRoles",
-          choices=x$selected,
-          selected=x$selected
-        )
-        
-        # Render the handsontable
-        getTable()
-      }
+      # Remove old months
+      DF = DF[c(1,which(colnames(DF) %in% mns))]
+      
+      # Update reactive variables
+      x$df = DF
+      x$selected = DF$Role[DF$Role!="Total"]
+      x$n = nrow(x$df)
+      
+      # Update the role input
+      updateSelectizeInput(
+        session=session,
+        inputId="TypeRoles",
+        choices=x$selected,
+        selected=x$selected
+      )
+      
+      # Render the handsontable
+      getTable()
       
     })
     
-    # Save Worksheet
-    observeEvent(input$saveFile,{
+    # Save the worksheet
+    output$saveWorksheet = downloadHandler(
       
-      x$fileinfo = parseSavePath(roots,input$saveFile)
-      
-      if(nrow(x$fileinfo)>0){
+      filename = "workforce-plan.rds",
+      content = function(file) {
         
-        if(!is.null(input$TypeRoles)){
-          
-          DF = hot_to_r(input$hot)
-          show("saveIcon")
-          save(DF,file=as.character(x$fileinfo$datapath))
-          Sys.sleep(1)
-          html("savePlan",paste0("Worksheet saved as <b>",x$fileinfo$name,"</b>"))
-          show("savePlan")
-          removeClass("saveIcon","fa-spinner fa-spin")
-          addClass("saveIcon","fa-check")
-          Sys.sleep(5)
-          hide("savePlan")
-          hide("saveIcon")
-          removeClass("saveIcon","fa-check")
-          addClass("saveIcon","fa-spinner fa-spin")
-          
+        DF = hot_to_r(input$hot)
+        save(DF,file=file)
+        
         }
-        
-      }
       
-    })
+    )
     
     # Role Input UI
     observe({
@@ -434,10 +398,7 @@ shinyApp(
                 style="background-color:#85C1E9;",
                 "Expected 12-Month Headcount Change"
               ),
-              div(
-                class="smallPad",
-                HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
-              )
+              div(class="smallPad",HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F)))
               
             )
             
@@ -456,10 +417,7 @@ shinyApp(
         output$headChange = renderUI({""})
         output$NoChangeAlert = renderUI({
           
-          div(
-            style="color:red;",
-            "There aren't any changes in headcounts. There is nothing to analyze."
-          )
+          div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
           
         })
         

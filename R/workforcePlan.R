@@ -9,7 +9,6 @@
 #' @import rhandsontable
 #' @import data.table
 #' @import knitr
-#' @import shinyFiles
 #' @importFrom shinyjs useShinyjs show hide removeClass addClass hidden html
 #' @export
 
