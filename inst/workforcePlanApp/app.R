@@ -192,11 +192,18 @@ shinyApp(
       x$fileinfo = parseFilePaths(roots,input$chooseFile)
       if(nrow(x$fileinfo)>0){
         
+        # Load the worksheet file (".rds")
         load(file=as.character(x$fileinfo$datapath))
+        
+        # Remove old months
+        DF = DF[c(1,which(colnames(DF) %in% mns))]
+        
+        # Update reactive variables
         x$df = DF
         x$selected = DF$Role[DF$Role!="Total"]
         x$n = nrow(x$df)
         
+        # Update the role input
         updateSelectizeInput(
           session=session,
           inputId="TypeRoles",
