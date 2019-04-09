@@ -51,9 +51,10 @@ shinyApp(
     p(
       class="fixedWidth",
       "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
-      workforce planning tasks that support recruitment, team strategy, and business forecasting. Users must indicate the roles 
-      within their team and monthly desired headcounts. This leads to pragmatic calculations which provide insight into hiring needs, 
-      expected turnover, and other factors that contribute to the successful management of a high-performing team."
+      workforce planning tasks that support recruitment, team strategy, and business forecasting. Users indicate the roles 
+      within their team, cost per role estimates, and monthly desired headcounts. This leads to pragmatic calculations 
+      which provide insight into hiring needs, expected turnover, and other factors that contribute to the successful 
+      management of a high-performing team."
     ),
     br(),
 
@@ -75,8 +76,9 @@ shinyApp(
     h3("Step 2: Annual Cost Per Role"),
     p(
       class="fixedWidth",
-      "Specify the typical annual cost ($) per employee in each role. This information is used
-      to estimate spending over time on labor."
+      "Specify the typical annual cost ($) per employee in each role. This info is used
+      to estimate spending over time on labor. For example, an analyst might cost the business
+      about $55,000 per year."
     ),
     br(),
     rHandsontableOutput("spendHot"),
@@ -90,7 +92,7 @@ shinyApp(
       or FTEs, in each role at the start of the month (i.e. I need three associates working
       in my team at the start of August in order to properly manage the portfolio).",
       strong("Don't forget to periodically save your worksheet!")
-    ),
+      ),
     br(),
     rHandsontableOutput("hot"),
     uiOutput("downloadButtonUI"),
@@ -169,6 +171,7 @@ shinyApp(
       # Add spending totals based on cost estimates and headcounts
       spend.totals = sapply(x$df[-1],as.numeric)
       spend.totals = crossprod(x$spend$Cost,spend.totals)
+      spend.totals = round(spend.totals/12)
       spend.totals = as.data.frame(spend.totals)
       spend.totals = cbind("Role"="Total Spending",spend.totals)
       colnames(spend.totals) = colnames(x$df)
