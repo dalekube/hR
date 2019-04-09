@@ -4,10 +4,8 @@
 ## part of the hR package available in CRAN
 
 suppressMessages(library(shiny))
-suppressMessages(library(shinyjs))
 suppressMessages(library(rhandsontable))
 suppressMessages(library(data.table))
-suppressMessages(library(shinyFiles))
 suppressMessages(library(knitr))
 
 # Initialize dummy global variables to pass CRAN tests
@@ -30,19 +28,16 @@ shinyApp(
   ui = fluidPage(
     
     # Boilerplate Code
-    useShinyjs(),
     tags$meta(name="viewport",content="width=750"),
     tags$title("hR: Workforce Planning"),
     tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
     tags$style(HTML(
-      ".fa-check, .fa-save {color:green;}
-      .fixedWidth {width:750px;}
+      ".fixedWidth {width:750px;}
       .rhandsontable {overflow:visible;}
       body {min-height:1200px;margin:25px;}
       td {padding-right:15px;width:auto;white-space:nowrap !important;}
       .colHeader {white-space:nowrap !important;}
       .col-sm-3 {width:auto;}
-      #saveFile {margin-left:15px;}
       #Calculate {margin-bottom:10px;}
       .metricsBox1 {width:auto;height:auto;display:inline-block;border-radius:5px;margin:10px;}
       .metricsBox2 {color:white;width:auto;font-size:20px;}
@@ -56,69 +51,61 @@ shinyApp(
     p(
       class="fixedWidth",
       "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
-      workforce planning tasks that support recruitment, team strategy, and business forecasting. Users must indicate the roles 
-      within their team and monthly desired headcounts. This leads to pragmatic calculations which provide insight into hiring needs, 
-      expected turnover, and other factors that contribute to the successful management of a high-performing team."
+      workforce planning tasks that support recruitment, team strategy, and business forecasting. Users indicate the roles 
+      within their team, cost per role estimates, and monthly desired headcounts. This leads to pragmatic calculations 
+      which provide insight into hiring needs, expected turnover, and other factors that contribute to the successful 
+      management of a high-performing team."
     ),
     br(),
-    
-    # Select an existing worksheet file
-    shinyFilesButton(
-      id="chooseFile",
-      label="Load Existing Worksheet",
-      title="Choose an existing worksheet...",
-      multiple=FALSE,
-      icon=icon("file-upload")
-    ),
-    
-    # Button to save the worksheet
-    shinySaveButton(
-      id="saveFile",
-      label='Save the Worksheet', 
-      icon=icon("save"),
-      title='Save as...',
-      filetype=list(text=".rds")
-    ),
-    
-    # Confirmation message presented when a worksheet saves
-    hidden(
-      tags$i(id='saveIcon',class='fas fa-spinner fa-spin'),
-      span(id="savePlan")
-      ),
-    
+
+    fileInput("loadWorksheet",label="Load Existing Worksheet",accept=".rds",multiple=F),
     hr(),
     
     # Step 1: Define team roles
     h3("Step 1: Define Team Roles"),
     p(
       class="fixedWidth",
-      "Type-in (1) the roles that exist in your team now and 
-      (2) the roles that will exist in the next 12 months. This ensures that you are
-      planning ahead for all roles in your team. Each entry will create a new row in the table in Step 2."
+      "Indicate the roles that exist in your team now and the roles that 
+      will exist in the next 12 months. This ensures that you are planning ahead 
+      for all roles in your team."
     ),
     uiOutput("TypeRolesUI"),
     hr(),
     
-    # Step 2: Add Desired Headcounts
-    h3("Step 2: Add Desired Headcounts"),
+    # Step 2: Specify Typical Cost Per Role
+    h3("Step 2: Annual Cost Per Role"),
+    p(
+      class="fixedWidth",
+      "Specify the typical annual cost ($) per employee in each role. This info is used
+      to estimate spending over time on labor. For example, an analyst might cost the business
+      about $55,000 per year."
+    ),
+    br(),
+    rHandsontableOutput("spendHot"),
+    hr(),
+    
+    # Step 3: Add Desired Headcounts
+    h3("Step 3: Add Desired Headcounts"),
     p(
       class="fixedWidth",
       "Type-in the desired headcounts, which should reflect the number of employees,
       or FTEs, in each role at the start of the month (i.e. I need three associates working
       in my team at the start of August in order to properly manage the portfolio).",
       strong("Don't forget to periodically save your worksheet!")
-    ),
+      ),
     br(),
     rHandsontableOutput("hot"),
+    uiOutput("downloadButtonUI"),
     hr(),
     
-    # Step 3: Calculate Change Metrics
-    h3("Step 3: Calculate Change Metrics"),
+    # Step 4: Calculate Change Metrics
+    h3("Step 4: Calculate Change Metrics"),
     p(
       class="fixedWidth",
-      "Press the 'Calculate' button to calculate relevant change metrics which help to plan ahead for
-      the next 12 months. Use this data to develop an effective talent stratey.
-      The calculations consider the headcounts in the previous table."
+      "Finally, press the 'Calculate' button to calculate relevant change metrics 
+      which help to plan ahead for the next 12 months. Use this data to develop an effective 
+      talent stratey and communicate your plans to others. The calculations consider the 
+      cost estimates and headcounts in the previous steps."
     ),
     uiOutput("calculateUI"),
     div(
@@ -128,116 +115,160 @@ shinyApp(
       uiOutput("turnover"),
       uiOutput("headChange")
     )
+    
   ),
   
   # Server client
   server = function(input,output,session){
     
     # Define reactive variables and shinyFile objects
-    x = reactiveValues()
-    roots = getVolumes()
-    shinyFileChoose(input,"chooseFile",roots=roots,filetypes=c("rds"))
-    shinyFileSave(input,"saveFile",roots=roots)
+    x = reactiveValues(
+      aggs=c("Total Headcount","Total Spending")
+    )
     
-    # Render the handsontable
+    # Reactive variable to render the spend handsontable
+    getSpendTable = reactive({
+      
+      # Update Cost Estimate Role UI
+      new.roles = x$roles[!(x$roles %in% x$spend$Role)]
+      if(length(new.roles)>0){
+        
+        new.spend = data.frame(Role=new.roles,Cost=0,stringsAsFactors=F)
+        x$spend = rbind(x$spend,new.spend)
+        
+      }
+      
+      # Account for removed roles
+      x$spend = x$spend[x$spend$Role %in% x$roles,]
+      
+      renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
+                       Handsontable.renderers.NumericRenderer.apply(this, arguments);
+                       if (col==0) {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';}
+                       else {td.align='center';}}")
+      
+      # Render the cost per role handsontable
+      output$spendHot = renderRHandsontable({
+
+        rhandsontable(x$spend,rowHeaders=NULL) %>% hot_cols(renderer=renderer) %>% hot_col("Cost",format="$0,000")
+        
+      })
+      
+    })
+    
+    # Reactive variable to render the headcount handsontable
     getTable = reactive({
+
+      # Add headcount totals if there are multiple roles
+      x$df = x$df[!(x$df$Role %in% x$aggs),]
+        
+      # Add headcount totals
+      head.totals = sapply(x$df[-1],as.numeric)
+      if(nrow(x$df)>1){
+        head.totals = colSums(head.totals)
+      }
+      head.totals = c("Role"="Total Headcount",head.totals)
       
-      # Render the table
-      output$hot = renderRHandsontable({
-        
-        m = x$n-1
-        if(nrow(x$df)>1){
-          
-          renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
-                           Handsontable.renderers.TextRenderer.apply(this, arguments);
-                           if (col==0 & row!=",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';} 
-                           else if (row==",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='center';td.style.fontWeight='bold';cellProperties.readOnly='true';} 
-                           else {td.align='center';}}
-                           ")
-          }else{
-  
-              renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
-                         Handsontable.renderers.TextRenderer.apply(this, arguments);
-                         if (col==0) {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';}
-                         else {td.align='center';}}
-                         ")
-              }
-        
-        # Render the rhandsontable object
-        rhandsontable(x$df) %>% hot_cols(renderer=renderer)
-        
-        })
+      # Add spending totals based on cost estimates and headcounts
+      spend.totals = sapply(x$df[-1],as.numeric)
+      spend.totals = crossprod(x$spend$Cost,spend.totals)
+      spend.totals = round(spend.totals/12)
+      spend.totals = as.data.frame(spend.totals)
+      spend.totals = cbind("Role"="Total Spending",spend.totals)
+      colnames(spend.totals) = colnames(x$df)
       
-      # Present the Calculate button if records exist in the table
-      if(nrow(x$df)>0){
-        
-        output$calculateUI = renderUI({
-          
-          actionButton(
-            inputId="Calculate",
-            label="Calculate",
-            icon=icon("calculator")
-          )
-          
-        })
-        }else{
-          output$calculateUI = renderUI({""})
-        }
+      # Combine aggregates and recount table
+      x$df = rbind(x$df,head.totals,spend.totals)
+      x$n = nrow(x$df)
+      row.names(x$df) = NULL
+      
+      # Decide which style to render the handsontable with
+      m = x$n-2
+      renderer = paste("function (instance, td, row, col, prop, value, cellProperties) {
+                       Handsontable.renderers.NumericRenderer.apply(this, arguments);
+                       if (col==0 & row<",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='left';cellProperties.readOnly='true';} 
+                       else if (row>=",m,") {td.style.background = '#F0F0F0';td.style.color = 'black';td.align='right';td.style.fontWeight='bold';cellProperties.readOnly='true';} 
+                       else {td.align='center';}}
+                       ")
+      
+      # Render the rhandsontable object
+      output$hot = renderRHandsontable({rhandsontable(x$df,rowHeaders=NULL) %>% hot_cols(renderer=renderer)})
       
       })
     
-    # Load Existing Worksheet
-    observeEvent(input$chooseFile,{
+    # Observe headcount table to see if Calculate button should be visible
+    observe({
       
-      x$fileinfo = parseFilePaths(roots,input$chooseFile)
-      if(nrow(x$fileinfo)>0){
+      # Present the Calculate button if records exist in the table
+      if(!is.null(x$df)){
         
-        load(file=as.character(x$fileinfo$datapath))
-        x$df = DF
-        x$selected = DF$Role[DF$Role!="Total"]
-        x$n = nrow(x$df)
-        
-        updateSelectizeInput(
-          session=session,
-          inputId="TypeRoles",
-          choices=x$selected,
-          selected=x$selected
-        )
-        
-        # Render the handsontable
-        getTable()
-      }
-      
-    })
-    
-    # Save Worksheet
-    observeEvent(input$saveFile,{
-      
-      x$fileinfo = parseSavePath(roots,input$saveFile)
-      
-      if(nrow(x$fileinfo)>0){
-        
-        if(!is.null(input$TypeRoles)){
+        if(nrow(x$df)>0){
           
-          DF = hot_to_r(input$hot)
-          show("saveIcon")
-          save(DF,file=as.character(x$fileinfo$datapath))
-          Sys.sleep(1)
-          html("savePlan",paste0("Worksheet saved as <b>",x$fileinfo$name,"</b>"))
-          show("savePlan")
-          removeClass("saveIcon","fa-spinner fa-spin")
-          addClass("saveIcon","fa-check")
-          Sys.sleep(5)
-          hide("savePlan")
-          hide("saveIcon")
-          removeClass("saveIcon","fa-check")
-          addClass("saveIcon","fa-spinner fa-spin")
+          output$calculateUI = renderUI({
+            
+            actionButton(inputId="Calculate",label="Calculate",icon=icon("calculator"))
+            
+          })
+          
+          output$downloadButtonUI = renderUI({
+            
+            downloadButton('saveWorksheet','Save Worksheet',style="background-color:green;color:white;margin-top:10px;")
+            
+          })
+          
+        }else{
+          
+          output$calculateUI = renderUI({""})
+          output$downloadButtonUI = renderUI({""})
           
         }
         
       }
       
     })
+    
+    # Load Existing Worksheet
+    observeEvent(input$loadWorksheet,{
+        
+      # Load the worksheet file (".rds")
+      load(file=as.character(input$loadWorksheet$datapath))
+      
+      # Remove old months
+      DF = DF[c(1,which(colnames(DF) %in% mns))]
+      
+      # Update reactive variables
+      x$df = DF
+      x$selected = DF$Role[!(DF$Role %in% x$aggs)]
+      x$n = nrow(x$df)
+      x$roles = x$selected
+      x$spend = SPEND
+      
+      # Update the role input
+      updateSelectizeInput(
+        session=session,
+        inputId="TypeRoles",
+        choices=x$selected,
+        selected=x$selected
+      )
+      
+      # Render the handsontable
+      getSpendTable()
+      getTable()
+      
+    })
+    
+    # Save the worksheet
+    output$saveWorksheet = downloadHandler(
+      
+      filename = "workforce-plan.rds",
+      content = function(file) {
+        
+        DF = hot_to_r(input$hot)
+        SPEND = hot_to_r(input$spendHot)
+        save(DF,SPEND,file=file)
+        
+        }
+      
+    )
     
     # Role Input UI
     observe({
@@ -279,20 +310,10 @@ shinyApp(
       # Account for removed roles
       x$df = x$df[x$df$Role %in% x$roles,]
       
-      # Add totals if there are multiple roles
-      if(nrow(x$df)>1){
-        
-        totals = sapply(x$df[-1],as.numeric)
-        totals = c("Role"="Total",colSums(totals))
-        x$df = rbind(x$df,totals)
-        x$n = nrow(x$df)
-        row.names(x$df) = NULL
-        row.names(x$df)[x$n] = ""
-        
-      }
+      # Render the cost estimate handsontable
+      getSpendTable()
       
-      # Render the handsontable
-      x$n = nrow(x$df)
+      # Render the headcount handsontable
       getTable()
       
     })
@@ -300,21 +321,16 @@ shinyApp(
     # Account for changes to the hot table
     observeEvent(input$hot,{
       
-      # Add totals if there are multiple roles
-      x$new = hot_to_r(input$hot)
-      x$new = x$new[x$new$Role!="Total",]
-      if(nrow(x$new)>1){
-        
-        totals = sapply(x$new[-1],as.numeric)
-        totals = c("Role"="Total",colSums(totals))
-        x$df = rbind(x$new,totals)
-        x$n = nrow(x$df)
-        row.names(x$df) = NULL
-        row.names(x$df)[x$n] = ""
-        
-      }
+      x$df = hot_to_r(input$hot)
+      getTable()
       
-      # Render the handsontable
+    })
+    
+    # Account for changes to the spend Hot table
+    observeEvent(input$spendHot,{
+      
+      x$spend = hot_to_r(input$spendHot)
+      getSpendTable()
       getTable()
       
     })
@@ -327,9 +343,7 @@ shinyApp(
       m = t(m[-1])
       colnames(m) = cols
       m = data.table(m,keep.rownames=T)
-      if("Total" %in% cols){
-        m[,Total:=NULL]
-      }
+      m = m[,!(colnames(m) %in% x$aggs),with=F]
       h = m[c(1,nrow(m)),-1]
       cols = colnames(m)[-1]
       m[,(cols):=lapply(.SD,as.numeric),.SDcols=cols]
@@ -427,10 +441,7 @@ shinyApp(
                 style="background-color:#85C1E9;",
                 "Expected 12-Month Headcount Change"
               ),
-              div(
-                class="smallPad",
-                HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
-              )
+              div(class="smallPad",HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F)))
               
             )
             
@@ -449,10 +460,7 @@ shinyApp(
         output$headChange = renderUI({""})
         output$NoChangeAlert = renderUI({
           
-          div(
-            style="color:red;",
-            "There aren't any changes in headcounts. There is nothing to analyze."
-          )
+          div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
           
         })
         

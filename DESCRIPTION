@@ -1,7 +1,7 @@
 Package: hR
 Type: Package
 Title: Toolkit for Data Analytics in Human Resources
-Version: 0.1.7
+Version: 0.1.8
 Author: Dale Kube [aut, cre]
 Authors@R: person("Dale","Kube",email="dkube@uwalumni.com",role=c("aut","cre"))
 Maintainer: Dale Kube <dkube@uwalumni.com>
@@ -14,6 +14,6 @@ Encoding: UTF-8
 License: GPL
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: data.tree, data.table, shiny, rhandsontable, knitr, shinyjs, shinyFiles
+Imports: data.tree, data.table, shiny, rhandsontable, knitr
 Suggests: rmarkdown
 VignetteBuilder: knitr

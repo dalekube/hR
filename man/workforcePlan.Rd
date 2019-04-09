@@ -4,7 +4,10 @@
 \alias{workforcePlan}
 \title{workforcePlan}
 \usage{
-workforcePlan()
+workforcePlan(launch.browser = T)
+}
+\arguments{
+\item{launch.browser}{Logical; whether the app should launch in the user's default browser}
 }
 \description{
 Launch a simple, interactive workforce planning worksheet that helps managers and
