@@ -39,8 +39,6 @@ shinyApp(
       .colHeader {white-space:nowrap !important;}
       .col-sm-3 {width:auto;}
       #Calculate {margin-bottom:10px;}
-      .metricsBox1 {width:auto;height:auto;display:inline-block;border-radius:5px;margin:10px;}
-      .metricsBox2 {color:white;width:auto;font-size:20px;}
       .smallPad {padding:5px;}"
     )),
 
@@ -108,14 +106,12 @@ shinyApp(
       cost estimates and headcounts in the previous steps."
     ),
     uiOutput("calculateUI"),
-    div(
-      style="display:flex;align-items:top;margin-top:10px;",
-      uiOutput("NoChangeAlert"),
-      uiOutput("hires"),
-      uiOutput("turnover"),
-      uiOutput("headChange"),
-      uiOutput("totalSpending")
-    )
+    br(),
+    uiOutput("NoChangeAlert"),
+    uiOutput("hires"),
+    uiOutput("turnover"),
+    uiOutput("headChange"),
+    uiOutput("totalSpending")
 
   ),
 
