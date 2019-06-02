@@ -1,4 +1,4 @@
-"EFFDT","EFFSEQ","ACTION","EMPLID","SUPV_ID","EMPL_TYPE","REG_TEMP","JOB_TITLE","STATUS","EMPL_NAME"
+"DATE","SEQ","ACTION","EMPLID","SUPVID","TYPE","REGTEMP","TITLE","STATUS","NAME"
 "01/01/18",0,"Hire","131356","180014","Employee","Regular","Analyst","Active","George"
 "01/01/18",1,"Data Change","131356","180014","Employee","Regular","Analyst","Active","George"
 "07/15/18",0,"Promotion","131356","180014","Employee","Regular","Analyst","Active","George"
