@@ -1,14 +1,14 @@
 
-#' Job history data for a sample team of employees and contractors.
+#' Workforce history data for a sample team of employees and contractors.
 #'
-#' Artificial data that reflects the job history structure often used
+#' Artificial data that reflects the workforce history data structure often used
 #' to manage employment records in a human capital management system (HCM).
 #' Modern enterprises store data in this format at the core of their HCM. This
 #' data is the root source of all data analysis and reporting related to
 #' headcount, hiring, turnover, etc.
 #'
 #' @docType data
-#' @usage data(jobHistory)
+#' @usage data(workforceHistory)
 #' @format A data frame with 42 rows and 10 variables:
 #' \describe{
 #'   \item{DATE}{Effective date of the record}
@@ -23,4 +23,4 @@
 #'   \item{NAME}{Employee name}
 #'   ...
 #' }
-"jobHistory"
+"workforceHistory"

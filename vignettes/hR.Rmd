@@ -13,11 +13,13 @@ vignette: >
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-110480958-3"></script>
 <script>
+
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'UA-110480958-3');
+  
 </script>
 </head>
 
@@ -29,9 +31,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. Two functions, 'hierarchyLong' and 'hierarchyWide', convert standard employee and supervisor relationship data into useful formats. A 'workforcePlan' app is available for simple workforce planning.  
+Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. Two functions, 'hierarchyLong' and 'hierarchyWide', convert standard employee and supervisor relationship data into useful formats. A 'workforcePlan' app is available for simple workforce planning.
 
 Install the package from CRAN by running the `install.packages("hR")` command.
+
+## workforceHistory data
+
+The examples in this document leverage the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table that contains one row per active employee and contractor in order to properly use the `hierarchyLong` and `hierarchyWide` functions.
+
+```{r workforceHistory}
+data("workforceHistory")
+
+
+```
 
 
 ## hierarchyLong
