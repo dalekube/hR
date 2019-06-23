@@ -9,20 +9,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-110480958-3"></script>
-<script>
-
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-110480958-3');
-  
-</script>
-</head>
-
 ```{r setup, include = FALSE}
 library(hR)
 knitr::opts_chunk$set(
@@ -37,44 +23,50 @@ Install the package from CRAN by running the `install.packages("hR")` command.
 
 ## workforceHistory data
 
-The examples in this document leverage the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table that contains one row per active employee and contractor in order to properly use the `hierarchyLong` and `hierarchyWide` functions.
+The two examples in this document leverage the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table that contains one row per active employee and contractor in order to properly use the `hierarchyLong` and `hierarchyWide` functions.
 
 ```{r workforceHistory}
 data("workforceHistory")
 
+# Reduce to DATE <= today to exclude future-dated records
+dt = workforceHistory[DATE<=Sys.Date()]
 
+# Reduce to max DATE and SEQ per person
+dt = dt[dt[,.I[which.max(DATE)],by=.(EMPLID)]$V1]
+dt = dt[dt[,.I[which.max(SEQ)],by=.(EMPLID,DATE)]$V1]
+
+# Only consider workers who are currently active
+# This provides a reliable 'headcount' data set that reflects today's active workforce
+dt = dt[STATUS=="Active"]
+
+# Exclude the CEO because she does not have a supervisor
+CEO = dt[TITLE=="CEO",EMPLID]
+dt = dt[EMPLID!=CEO]
 ```
 
 
 ## hierarchyLong
 
-The `hierarchyLong` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a long format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data frame consisting of one row per employee for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization). The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
+The `hierarchyLong` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into an elongated format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data.table consisting of one row per employee for every supervisor above them, up to the top of the tree. The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
 
 ```{r hierarchyLong}
-ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
-supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
-df = hierarchyLong(ee,supv)
-print(df)
+# Use the hierarchyLong() function to produce an elongated hierarchy data.table
+hLong = hierarchyLong(dt$EMPLID,dt$SUPVID)
+print(hLong)
 
-# How many employees report up through Susan?
-nrow(df[df$Supervisor=="Susan@hR.com",])
-
-# Who reports up through Susan?
-df[df$Supervisor=="Susan@hR.com",]
+# Who reports up through Susan? (direct and indirect reports)
+hLong[Supervisor==CEO]
 ```
 
 
 ## hierarchyWide
 
-The `hierarchyWide` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data frame with a column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
+The `hierarchyWide` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data.table with a column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
 
 ```{r hierarchyWide}
-df = hierarchyWide(ee,supv)
-print(df)
+hWide = hierarchyWide(dt$EMPLID,dt$SUPVID)
+print(hWide)
 
-# How many employees report up through Susan?
-sum(df$Supv1=="Susan@hR.com",na.rm=T)
-
-# Who reports up through Susan?
-df[which(df$Supv1=="Susan@hR.com"),]
+# Who reports up through Pablo? (direct and indirect reports)
+hWide[Supv2==199827]
 ```

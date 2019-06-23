@@ -1,18 +1,18 @@
 
 #' @title hierarchyLong
 #' @description The hierarchyLong function transforms a standard set of unique employee and
-#' supervisor identifiers (employee IDs, email addresses, etc.) into a long format that can be
-#' used to aggregate employee data by a particular line of leadership (i.e. include everyone who
-#' rolls up to Susan). The function returns a long data frame consisting of one row per employee
-#' for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization).
-#' The levels represent the number of supervisors from the employee (starting with "1" for an
-#' employee's direct supervisor).
+#' supervisor identifiers (employee IDs, email addresses, etc.) into an elongated format that
+#' can be used to aggregate employee data by a particular line of leadership (i.e. include
+#' everyone who rolls up to Susan). The function returns a long data.table consisting of one
+#' row per employee for every supervisor above them, up to the top of the tree. The levels
+#' represent the number of supervisors from the employee (starting with "1" for an employee's
+#' direct supervisor).
 #' @param ee An array containing unique identifers for employees.
 #' @param supv An array containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @import data.tree data.table
 #' @export
-#' @return data frame
+#' @return data table
 #' @examples
 #' ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
 #' supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")

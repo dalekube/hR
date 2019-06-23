@@ -9,7 +9,7 @@
 #'
 #' @docType data
 #' @usage data(workforceHistory)
-#' @format A data frame with 42 rows and 10 variables:
+#' @format A data table with 45 rows and 10 variables:
 #' \describe{
 #'   \item{DATE}{Effective date of the record}
 #'   \item{SEQ}{Effective sequence of the record (used to manage multiple records for the same effective date)}
