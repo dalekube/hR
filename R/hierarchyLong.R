@@ -20,6 +20,9 @@
 
 hierarchyLong = function(ee,supv){
 
+  # Supress CRAN check for 'no visible binding' error
+  Level = NULL
+
   # Convert factors to character
   ee = as.character(ee)
   supv = as.character(supv)
