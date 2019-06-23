@@ -17,9 +17,9 @@ data frame
 }
 \description{
 The hierarchyWide function transforms a standard set of unique employee and supervisor
-identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate 
-employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The 
-function returns a wide data frame with a column for every level in the hierarchy, 
+identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate
+employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The
+function returns a wide data frame with a column for every level in the hierarchy,
 starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
 }
 \examples{

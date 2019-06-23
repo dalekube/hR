@@ -2,7 +2,10 @@
 #' Job history data for a sample team of employees and contractors.
 #'
 #' Artificial data that reflects the job history structure often used
-#' to manage employment records in a human capital management system.
+#' to manage employment records in a human capital management system (HCM).
+#' Modern enterprises store data in this format at the core of their HCM. This
+#' data is the root source of all data analysis and reporting related to
+#' headcount, hiring, turnover, etc.
 #'
 #' @docType data
 #' @usage data(jobHistory)
