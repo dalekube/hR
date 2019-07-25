@@ -13,16 +13,16 @@ hierarchyLong(ee, supv)
 of the same type as the employee values.}
 }
 \value{
-data frame
+data table
 }
 \description{
 The hierarchyLong function transforms a standard set of unique employee and
-supervisor identifiers (employee IDs, email addresses, etc.) into a long format that can be 
-used to aggregate employee data by a particular line of leadership (i.e. include everyone who 
-rolls up to Susan). The function returns a long data frame consisting of one row per employee 
-for every supervisor above them, up to the top of the tree (i.e. the CEO in your organization).
-The levels represent the number of supervisors from the employee (starting with "1" for an 
-employee's direct supervisor).
+supervisor identifiers (employee IDs, email addresses, etc.) into an elongated format that
+can be used to aggregate employee data by a particular line of leadership (i.e. include
+everyone who rolls up to Susan). The function returns a long data.table consisting of one
+row per employee for every supervisor above them, up to the top of the tree. The levels
+represent the number of supervisors from the employee (starting with "1" for an employee's
+direct supervisor).
 }
 \examples{
 ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
