@@ -54,7 +54,7 @@ hierarchyLong = function(ee,supv){
     
     error=function(cond){
       
-      message("The network is not a tree! Make sure the data reflects complete, unbroken tree of employees and supervisors.")
+      message("The network is not a tree. Validate the data and ensure it reflects a complete, unbroken tree of employees and supervisors.")
     
     },
     finally={
