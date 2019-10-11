@@ -23,7 +23,7 @@ hierarchyLong = function(ee,supv){
   # Supress CRAN check for 'no visible binding' error
   Level = NULL
 
-  # Convert factors to character
+  # Coerce to character data type
   ee = as.character(ee)
   supv = as.character(supv)
 
@@ -31,51 +31,62 @@ hierarchyLong = function(ee,supv){
   if(class(ee)!=class(supv)){
 
     stop("Employee and supervisor inputs are different data types.")
-
-    # Ensure the inputs are of equal length
-  }else if(
-    sum(is.na(ee)) > 0 |
-    sum(is.na(supv)) >0
-  ){
+    
+  }
+  
+  # Point out NA values
+  if(sum(is.na(ee)) > 0 | sum(is.na(supv)) >0){
 
     stop("Missing values exist.")
 
-    # Ensure the inputs are of equal length
-  }else if(length(ee)!=length(supv)){
+  }
+  
+  # Ensure the inputs are of equal length
+  if(length(ee)!=length(supv)){
 
     stop("Employee and supervisor inputs are of different lengths.")
 
-  }else{
+  }
 
-    df = data.frame(ee,supv,stringsAsFactors=F)
-    tryCatch(
-      {tree = FromDataFrameNetwork(df)},
-      error=function(cond){
-        message("The network is not a tree! Make sure the data reflects complete, unbroken tree of employees and supervisors.")
-      },
-      finally={
-        if(tree$height>2){
-          x = 3:tree$height
-          df[,x] = ""
-          for(w in x){
-            for(i in 1:nrow(df)){
-              y = df$supv[df$ee==df[i,w-1]]
-              df[i,w] = ifelse(length(y)>0,y,NA)
-            }
+  df = data.frame(ee,supv,stringsAsFactors=F)
+  tryCatch(
+    {tree = FromDataFrameNetwork(df)},
+    
+    error=function(cond){
+      
+      message("The network is not a tree! Make sure the data reflects complete, unbroken tree of employees and supervisors.")
+    
+    },
+    finally={
+      
+      if(tree$height>2){
+        
+        x = 3:tree$height
+        df[,x] = ""
+        for(w in x){
+          for(i in 1:nrow(df)){
+            y = df$supv[df$ee==df[i,w-1]]
+            df[i,w] = ifelse(length(y)>0,y,NA)
           }
         }
+        
         z = 2:ncol(df)
         colnames(df)[z] = z-1
-        df = as.data.table(df)
-        df = df[,lapply(.SD,as.character)]
+        setDT(df)
         df = melt.data.table(df,id.vars=1,variable.factor=F)
-        colnames(df) = c("Employee","Level","Supervisor")
+        setnames(df,c("Employee","Level","Supervisor"))
         df = df[!is.na(df$Supervisor)]
-        df = df[order(df$Employee,df$Level)]
+        setorder(df,Employee,Level)
         df[,Level:=as.integer(Level)]
         return(df[])
-
+        
+      }else{
+        
+        return(df[])
+        
       }
-    )
-  }
+
+    }
+  )
+  
 }
