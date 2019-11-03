@@ -32,14 +32,18 @@ shinyApp(
     tags$title("hR: Workforce Planning"),
     tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
     tags$style(HTML(
-      ".fixedWidth {width:750px;}
+      "
+      .fixedWidth {width:750px;}
       .rhandsontable {overflow:visible;}
-      body {min-height:1200px;margin:25px;}
+      body {min-height:1600px;margin:25px;}
       td {padding-right:15px;width:auto;white-space:nowrap !important;}
       .colHeader {white-space:nowrap !important;}
       .col-sm-3 {width:auto;}
       #Calculate {margin-bottom:10px;}
-      .smallPad {padding:5px;}"
+      .smallPad {padding:5px;}
+      .metric {width:500px;margin-top:10px;}
+      
+      "
     )),
 
     # Header
@@ -368,8 +372,9 @@ shinyApp(
           output$hires = renderUI({
 
             div(
+              class="metric",
               div(
-                style="background-color:#52BE80;color:white;padding:3px",
+                style="background-color:#4D5656;color:white;padding:3px",
                 "Expected Hires Per Month"
               ),
               div(
@@ -396,9 +401,9 @@ shinyApp(
           output$turnover = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#DBA80C;color:white;padding:3px;",
+                style="background-color:#4D5656;color:white;padding:3px;",
                 "Expected Turnover Per Month"
               ),
               div(
@@ -436,9 +441,9 @@ shinyApp(
           output$headChange = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#85C1E9;color:white;padding:3px;",
+                style="background-color:#4D5656;color:white;padding:3px;",
                 "Expected 12-Month Headcount Change"
               ),
               div(
@@ -464,9 +469,9 @@ shinyApp(
           output$totalSpending = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#AB2D1F;color:white;padding:3px;",
+                style="background-color:#4D5656;color:white;padding:3px;",
                 "Expected Annual Compensation"
               ),
               div(
