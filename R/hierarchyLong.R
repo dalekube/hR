@@ -22,6 +22,7 @@ hierarchyLong = function(ee,supv){
 
   # Supress CRAN check for 'no visible binding' error
   Level = NULL
+  Employee = NULL
 
   # Coerce to character data type
   ee = as.character(ee)
