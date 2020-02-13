@@ -30,88 +30,122 @@ shinyApp(
     # Boilerplate Code
     tags$meta(name="viewport",content="width=750"),
     tags$title("hR: Workforce Planning"),
-    tags$head(HTML("<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.6.3/css/all.css' integrity='sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/' crossorigin='anonymous'>")),
+    tags$script(src="https://kit.fontawesome.com/a43c80910b.js", crossorigin="anonymous"),
     tags$style(HTML(
-      ".fixedWidth {width:750px;}
+      "
       .rhandsontable {overflow:visible;}
-      body {min-height:1200px;margin:25px;}
+      body {min-height:1600px;margin:25px;}
       td {padding-right:15px;width:auto;white-space:nowrap !important;}
       .colHeader {white-space:nowrap !important;}
       .col-sm-3 {width:auto;}
-      #Calculate {margin-bottom:10px;}
-      .smallPad {padding:5px;}"
+      #Calculate {margin-bottom:10px;background-color:green;color:white;}
+      .smallPad {padding:5px;}
+      .metric {
+        width:300px;
+        height:100px;
+        margin:5px;
+        border-radius:5px;
+        border:thin black solid;
+        background-color:#EAEAEA;
+        display:inline-block;
+        }
+      .metricHeader {font-weight:bold; padding:3px;}
+      .box {max-width:1000px;border-radius:5px;border:thin lightgrey solid;padding:15px;margin:20px;}
+      .textBox {max-width:750px;}
+      .fa-seedling {font-size:50px;}
+      
+      "
     )),
 
-    # Header
-    h2("Workforce Planning Worksheet"),
-
-    # Description paragraph
-    p(
-      class="fixedWidth",
+    div(
+      
+      class="box",
+      
+      # Header
+      div(
+        span(style="font-size:32px;margin-right:15px;","Workforce Planning Worksheet"),
+        icon("seedling")
+      ),
+      
+      # Description paragraph
+      p(
+      class="textBox",
       "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
       workforce planning tasks that support recruitment, team strategy, and business forecasting. Users indicate the roles
       within their team, cost per role estimates, and monthly desired headcounts. This leads to pragmatic calculations
       which provide insight into hiring needs, expected turnover, and other factors that contribute to the successful
       management of a high-performing team."
+      ),
+      br(),
+      
+      fileInput("loadWorksheet",label="Load Existing Worksheet",accept=".rds",multiple=F)
+      
     ),
-    br(),
 
-    fileInput("loadWorksheet",label="Load Existing Worksheet",accept=".rds",multiple=F),
-    hr(),
-
-    # Step 1: Define team roles
-    h3("Step 1: Define Team Roles"),
-    p(
-      class="fixedWidth",
+    div(
+      class="box",
+      
+      # Step 1: Define team roles
+      h3("Step 1: Define Team Roles"),
+      p(
+      class="textBox",
       "Indicate the roles that exist in your team now and the roles that
       will exist in the next 12 months. This ensures that you are planning ahead
-      for all roles in your team."
-    ),
-    uiOutput("TypeRolesUI"),
-    hr(),
-
-    # Step 2: Specify Typical Cost Per Role
-    h3("Step 2: Annual Cost Per Role"),
-    p(
-      class="fixedWidth",
+      for all roles in your team. For example, type 'Data Analyst'."
+      ),
+      uiOutput("TypeRolesUI"),
+      br(),
+      
+      # Step 2: Specify Typical Cost Per Role
+      h3("Step 2: Annual Cost Per Role"),
+      p(
+      class="textBox",
       "Specify the typical annual cost ($) per employee in each role. This info is used
       to estimate spending over time on labor. For example, an analyst might cost the business
       about $55,000 per year."
-    ),
-    br(),
-    rHandsontableOutput("spendHot"),
-    hr(),
-
-    # Step 3: Add Desired Headcounts
-    h3("Step 3: Add Desired Headcounts"),
-    p(
-      class="fixedWidth",
+      ),
+      br(),
+      rHandsontableOutput("spendHot"),
+      br(),
+      
+      # Step 3: Add Desired Headcounts
+      h3("Step 3: Add Desired Headcounts"),
+      p(
+      class="textBox",
       "Type-in the desired headcounts, which should reflect the number of employees,
       or FTEs, in each role at the start of the month (i.e. I need three associates working
       in my team at the start of August in order to properly manage the portfolio).",
       strong("Don't forget to periodically save your worksheet!")
       ),
-    br(),
-    rHandsontableOutput("hot"),
-    uiOutput("downloadButtonUI"),
-    hr(),
-
-    # Step 4: Calculate Change Metrics
-    h3("Step 4: Calculate Change Metrics"),
-    p(
-      class="fixedWidth",
+      br(),
+      rHandsontableOutput("hot"),
+      uiOutput("downloadButtonUI"),
+      br(),
+      
+      # Step 4: Calculate Change Metrics
+      h3("Step 4: Calculate Change Metrics"),
+      p(
+      class="textBox",
       "Finally, press the 'Calculate' button to calculate relevant change metrics
       which help to plan ahead for the next 12 months. Use this data to develop an effective
       talent stratey and communicate your plans to others. The calculations consider the
       cost estimates and headcounts in the previous steps."
-    ),
-    uiOutput("calculateUI"),
-    br(),
-    uiOutput("NoChangeAlert"),
-    uiOutput("hires"),
-    uiOutput("turnover"),
-    uiOutput("headChange"),
-    uiOutput("totalSpending")
+      ),
+      uiOutput("calculateUI"),
+      br(),
+      
+      div(
+        style="display:inline-block;",
+        
+        uiOutput("NoChangeAlert",inline=T),
+        uiOutput("hires",inline=T),
+        uiOutput("turnover",inline=T),
+        uiOutput("headChange",inline=T),
+        uiOutput("totalSpending",inline=T)
+        
+      )
+      
+    )
 
   ),
 
@@ -147,7 +181,9 @@ shinyApp(
       # Render the cost per role handsontable
       output$spendHot = renderRHandsontable({
 
-        rhandsontable(x$spend,rowHeaders=NULL) %>% hot_cols(renderer=renderer) %>% hot_col("Cost",format="$0,000")
+        rhandsontable(x$spend,rowHeaders=NULL) %>% 
+          hot_cols(renderer=renderer) %>% 
+          hot_col("Cost",format="$0,000")
 
       })
 
@@ -297,8 +333,7 @@ shinyApp(
     # Account for role additions and removals
     observeEvent(input$TypeRoles,{
 
-      x$roles = input$TypeRoles
-      x$roles = sort(x$roles)
+      x$roles = sort(input$TypeRoles)
 
       # Account for added roles
       x$roles_add = x$roles[!(x$roles %in% x$df$Role)]
@@ -368,9 +403,10 @@ shinyApp(
           output$hires = renderUI({
 
             div(
+              class="metric",
               div(
-                style="background-color:#52BE80;color:white;padding:3px",
-                "Expected Hires Per Month"
+                class="metricHeader",
+                "Expected Hires Per Month:"
               ),
               div(
                 class="smallPad",
@@ -396,10 +432,10 @@ shinyApp(
           output$turnover = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#DBA80C;color:white;padding:3px;",
-                "Expected Turnover Per Month"
+                class="metricHeader",
+                "Expected Turnover Per Month:"
               ),
               div(
                 class="smallPad",
@@ -436,10 +472,10 @@ shinyApp(
           output$headChange = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#85C1E9;color:white;padding:3px;",
-                "Expected 12-Month Headcount Change"
+                class="metricHeader",
+                "Expected 12-Month Headcount Change:"
               ),
               div(
                 class="smallPad",
@@ -464,10 +500,10 @@ shinyApp(
           output$totalSpending = renderUI({
 
             div(
-              style="margin-top:10px;",
+              class="metric",
               div(
-                style="background-color:#AB2D1F;color:white;padding:3px;",
-                "Expected Annual Compensation"
+                class="metricHeader",
+                "Expected Total Annual Compensation:"
               ),
               div(
                 class="smallPad",
