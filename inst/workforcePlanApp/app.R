@@ -42,7 +42,7 @@ shinyApp(
       .smallPad {padding:5px;}
       .metric {
         width:300px;
-        height:100px;
+        height:auto;
         margin:5px;
         border-radius:5px;
         border:thin black solid;
@@ -50,7 +50,7 @@ shinyApp(
         display:inline-block;
         }
       .metricHeader {font-weight:bold; padding:3px;}
-      .box {max-width:1000px;border-radius:5px;border:thin lightgrey solid;padding:15px;margin:20px;}
+      .box {width:1000px;border-radius:5px;border:thin lightgrey solid;padding:15px;margin:20px;}
       .textBox {max-width:750px;}
       .fa-seedling {font-size:50px;}
       
@@ -95,7 +95,7 @@ shinyApp(
       ),
       uiOutput("TypeRolesUI"),
       br(),
-      
+    
       # Step 2: Specify Typical Cost Per Role
       h3("Step 2: Annual Cost Per Role"),
       p(
