@@ -1,0 +1,49 @@
+
+#' @title hierarchyValid
+#' @description The hierarchyValid function considers a standard set of unique employee and 
+#' supervisor identifiers (employee IDs, email addresses, etc.) and validates the completeness
+#' and quality of the two input vectors representing the overall hierarchy.
+#' @param ee A vector containing unique identifiers for employees.
+#' @param supv A vector containing unique identifiers for supervisors. These values should be
+#' of the same type as the employee values.
+#' @return logical
+#' @export
+#' @examples
+#' ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
+#' supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
+#' hierarchyValid(ee,supv)
+
+hierarchyValid = function(ee,supv){
+  
+  # Ensure the inputs are the same type
+  if(class(ee)!=class(supv)){
+    
+    stop("Employee and supervisor inputs are different data types.")
+    
+  }
+  
+  # Point out NA values
+  if(sum(is.na(ee)) > 0 | sum(is.na(supv)) >0){
+    
+    stop("Missing values exist.")
+    
+  }
+  
+  # Ensure the inputs are of equal length
+  if(length(ee)!=length(supv)){
+    
+    stop("Employee and supervisor inputs are of different lengths.")
+    
+  }
+  
+  # Check for a broken tree
+  if(sum(!(supv %in% ee))>1){
+    
+    stop("The tree is broken. Make sure all employees roll up to a single person.")
+    
+  }
+  
+  # If everything else passes, return TRUE
+  return(TRUE)
+  
+}

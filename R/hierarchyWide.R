@@ -6,8 +6,8 @@
 #' everyone who rolls up to Susan). The function returns a wide data.table with a column for
 #' every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is likely
 #' the CEO in your organization).
-#' @param ee An array containing unique identifers for employees.
-#' @param supv An array containing unique identifiers for supervisors. These values should be
+#' @param ee A vector containing unique identifiers for employees.
+#' @param supv A vector containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @import data.tree data.table
 #' @export
@@ -22,30 +22,12 @@ hierarchyWide = function(ee,supv){
   # Validate character type for inputs
   ee = as.character(ee)
   supv = as.character(supv)
-
-  # Ensure the inputs are the same type
-  if(class(ee)!=class(supv)){
-
-    stop("Employee and supervisor inputs are different data types.")
-
-  }
   
-  # Point out NA values
-  if(sum(is.na(ee)) > 0 | sum(is.na(supv)) >0){
+  # Validate the input vectors for completeness and quality
+  hierarchyValid(ee,supv)
 
-    stop("Missing values exist.")
-    
-  }
-  
-  # Ensure the inputs are of equal length
-  if(length(ee)!=length(supv)){
-
-    stop("Employee and supervisor inputs are of different lengths.")
-
-  }
-
+  # Construct the tree and reformat the data
   df = data.frame(ee,supv,stringsAsFactors=F)
-
   tryCatch({tree = FromDataFrameNetwork(df)},
 
     error=function(cond){
@@ -56,7 +38,6 @@ hierarchyWide = function(ee,supv){
 
     finally={
 
-      # Traverse the tree and create a full table
       if(tree$height>2){
         
         x = 3:tree$height
