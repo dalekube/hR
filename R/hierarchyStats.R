@@ -2,8 +2,8 @@
 #' @title hierarchyStats
 #' @description The hierarchyStats function computes summary statistics and span of control measures
 #' from a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.).
-#' @param ee An array containing unique identifiers for employees.
-#' @param supv An array containing unique identifiers for supervisors. These values should be
+#' @param ee A vector containing unique identifiers for employees.
+#' @param supv A vector containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @import data.tree data.table
 #' @export
@@ -23,8 +23,8 @@ hierarchyStats = function(ee,supv){
   stopifnot(hierarchyValid(ee,supv))
   
   # Construct the tree and compute the statistics
-  df = data.frame(ee,supv,stringsAsFactors=F)
-  tryCatch({tree = FromDataFrameNetwork(df)},
+  dt = data.table(ee,supv)
+  tryCatch({tree = FromDataFrameNetwork(dt)},
            
            error=function(cond){
              

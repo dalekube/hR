@@ -23,9 +23,11 @@ hierarchyValid = function(ee,supv){
   }
   
   # Point out NA values
-  if(sum(is.na(ee)) > 0 | sum(is.na(supv)) >0){
+  ee_na = sum(is.na(ee))
+  supv_na = sum(is.na(supv))
+  if(ee_na+supv_na > 0){
     
-    stop("Missing values exist.")
+    stop(paste0("Missing values exist: ",ee_na," Employees, ",supv_na," Supervisors"))
     
   }
   
@@ -40,6 +42,13 @@ hierarchyValid = function(ee,supv){
   if(sum(!(supv %in% ee))>1){
     
     stop("The tree is broken. Make sure all employees roll up to a single person.")
+    
+  }
+  
+  # Check for employees reporting to themselves
+  if(sum(supv==ee)>0){
+    
+    stop("At least one employee is reporting to himself/herself in the data.")
     
   }
   
