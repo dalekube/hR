@@ -4,7 +4,7 @@ author: "Dale Kube"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hR Vignette}
+  %\VignetteIndexEntry{hR: Toolkit for Data Analytics in Human Resources}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of two transformational functions, 'hierarchyLong' and 'hierarchyWide', are demonstrated below. These convert standard employee and supervisor relationship data into useful formats.
+Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of three functions, `hierarchyLong`, `hierarchyWide`, and `hierarchyStats` are demonstrated below. These convert standard employee and supervisor relationship data to useful formats, summary statistics, and span of control metrics.
 
 Install the package from CRAN by running the `install.packages("hR")` command.
 
 ## workforceHistory data
 
-The two examples in this document leverage the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table that contains one row per active employee and contractor in order to properly use the `hierarchyLong` and `hierarchyWide` functions.
+The examples in this vignette use the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table containing one row per active employee and contractor in order to properly use the subsequent functions.
 
 ```{r workforceHistory}
 data("workforceHistory")
@@ -42,6 +42,10 @@ dt = dt[STATUS=="Active"]
 # Exclude the CEO because she does not have a supervisor
 CEO = dt[TITLE=="CEO",EMPLID]
 dt = dt[EMPLID!=CEO]
+
+# Show the prepared table
+# This represents an example, active workforce
+print(dt[,.(EMPLID,NAME,TITLE,SUPVID)])
 ```
 
 
@@ -50,12 +54,11 @@ dt = dt[EMPLID!=CEO]
 The `hierarchyLong` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into an elongated format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data.table consisting of one row per employee for every supervisor above them, up to the top of the tree. The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
 
 ```{r hierarchyLong}
-# Use the hierarchyLong() function to produce an elongated hierarchy data.table
 hLong = hierarchyLong(dt$EMPLID,dt$SUPVID)
 print(hLong)
 
 # Who reports up through Susan? (direct and indirect reports)
-hLong[Supervisor==CEO]
+print(hLong[Supervisor==CEO])
 ```
 
 
@@ -68,5 +71,31 @@ hWide = hierarchyWide(dt$EMPLID,dt$SUPVID)
 print(hWide)
 
 # Who reports up through Pablo? (direct and indirect reports)
-hWide[Supv2==199827]
+print(hWide[Supv2==199827])
+```
+
+## hierarchyStats
+
+The `hierarchyStats` function computes summary statistics and span of control metrics from a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.). The resulting metrics and table are accessible from a list object.
+
+```{r hierarchyStats}
+hStats = hierarchyStats(dt$EMPLID,dt$SUPVID)
+
+# Total Levels:
+print(hStats$levelsCount$value)
+
+# Total Individual Contributors:
+print(hStats$individualContributorsCount$value)
+
+# Total People Managers:
+print(hStats$peopleManagersCount$value)
+
+# Median Direct Reports:
+print(hStats$medianDirectReports$value)
+
+# Median Span of Control (Direct and Indirect Reports):
+print(hStats$medianSpanOfControl$value)
+
+# Span of Control Table
+print(hStats$spanOfControlTable)
 ```

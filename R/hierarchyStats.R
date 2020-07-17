@@ -1,11 +1,11 @@
 
 #' @title hierarchyStats
-#' @description The hierarchyStats function computes summary statistics and span of control measures
+#' @description The hierarchyStats function computes summary statistics and span of control metrics
 #' from a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.).
 #' @param ee A vector containing unique identifiers for employees.
 #' @param supv A vector containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
-#' @import data.tree data.table
+#' @import data.tree data.table stats
 #' @export
 #' @return list
 #' @examples
@@ -48,7 +48,7 @@ hierarchyStats = function(ee,supv){
                )
                
                # Total number of individual contributors
-               output["individualContributorCount"] = list(
+               output["individualContributorsCount"] = list(
                  list(
                    value=tree$leafCount,
                    description="Total number of individual contributors in the hierarchy"
@@ -56,7 +56,7 @@ hierarchyStats = function(ee,supv){
                )
                
                # Total number of people managers
-               output["peopleManagerCount"] = list(
+               output["peopleManagersCount"] = list(
                  list(
                    value=tree$totalCount-tree$leafCount,
                    description="Total number of people managers in the hierarchy"
@@ -96,7 +96,7 @@ hierarchyStats = function(ee,supv){
                
              }else{
                
-               return(df[])
+               return(dt[])
                
              }
              

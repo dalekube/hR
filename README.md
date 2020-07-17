@@ -1,5 +1,5 @@
 # hR
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics.
+Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. Get started with workforce planning using a simple Shiny app.
 
 # Installation
 Install the package from CRAN by running the `install.packages("hR")` command.

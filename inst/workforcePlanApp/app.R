@@ -26,7 +26,7 @@ shinyApp(
 
   # UI Client
   ui = fluidPage(
-
+    
     # Boilerplate Code
     tags$meta(name="viewport",content="width=750"),
     tags$title("hR: Workforce Planning"),
