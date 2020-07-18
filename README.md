@@ -1,4 +1,4 @@
-![hR hex](https://github.com/dalekube/hR/blob/master/hR.png)
+![hR hex](https://github.com/dalekube/hR/blob/master/hR.png?raw=true)
 
 Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. Get started with workforce planning using a simple Shiny app.
 
