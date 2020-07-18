@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of three functions, `hierarchyLong`, `hierarchyWide`, and `hierarchyStats` are demonstrated below. These convert standard employee and supervisor relationship data to useful formats, summary statistics, and span of control metrics.
+Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of three functions, `hierarchyLong`, `hierarchyWide`, and `hierarchyStats`, is demonstrated below. These convert standard employee and supervisor relationship data to useful formats, summary statistics, and span of control metrics.
 
 Install the package from CRAN by running the `install.packages("hR")` command.
 
