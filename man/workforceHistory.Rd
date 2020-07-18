@@ -4,7 +4,8 @@
 \name{workforceHistory}
 \alias{workforceHistory}
 \title{Workforce history data for a sample team of employees and contractors.}
-\format{A data table with 45 rows and 10 variables:
+\format{
+A data table with 45 rows and 10 variables:
 \describe{
   \item{DATE}{Effective date of the record}
   \item{SEQ}{Effective sequence of the record (used to manage multiple records for the same effective date)}
@@ -17,7 +18,8 @@
   \item{STATUS}{Employment status}
   \item{NAME}{Employee name}
   ...
-}}
+}
+}
 \usage{
 data(workforceHistory)
 }

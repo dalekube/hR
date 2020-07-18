@@ -7,9 +7,9 @@
 hierarchyWide(ee, supv)
 }
 \arguments{
-\item{ee}{An array containing unique identifers for employees.}
+\item{ee}{A vector containing unique identifiers for employees.}
 
-\item{supv}{An array containing unique identifiers for supervisors. These values should be
+\item{supv}{A vector containing unique identifiers for supervisors. These values should be
 of the same type as the employee values.}
 }
 \value{

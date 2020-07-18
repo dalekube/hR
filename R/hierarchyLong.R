@@ -7,8 +7,8 @@
 #' row per employee for every supervisor above them, up to the top of the tree. The levels
 #' represent the number of supervisors from the employee (starting with "1" for an employee's
 #' direct supervisor).
-#' @param ee An array containing unique identifers for employees.
-#' @param supv An array containing unique identifiers for supervisors. These values should be
+#' @param ee A vector containing unique identifiers for employees.
+#' @param supv A vector containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @import data.tree data.table
 #' @export
@@ -28,27 +28,10 @@ hierarchyLong = function(ee,supv){
   ee = as.character(ee)
   supv = as.character(supv)
 
-  # Ensure the inputs are the same type
-  if(class(ee)!=class(supv)){
+  # Validate the input vectors for completeness and quality
+  hierarchyValid(ee,supv)
 
-    stop("Employee and supervisor inputs are different data types.")
-    
-  }
-  
-  # Point out NA values
-  if(sum(is.na(ee)) > 0 | sum(is.na(supv)) >0){
-
-    stop("Missing values exist.")
-
-  }
-  
-  # Ensure the inputs are of equal length
-  if(length(ee)!=length(supv)){
-
-    stop("Employee and supervisor inputs are of different lengths.")
-
-  }
-
+  # Construct the tree and reformat the data
   df = data.frame(ee,supv,stringsAsFactors=F)
   tryCatch(
     {tree = FromDataFrameNetwork(df)},
