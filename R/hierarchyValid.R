@@ -38,13 +38,6 @@ hierarchyValid = function(ee,supv){
     
   }
   
-  # Check for a broken tree
-  if(sum(!(supv %in% ee))>1){
-    
-    stop("The tree is broken. Make sure all employees roll up to a single person.")
-    
-  }
-  
   # Check for employees reporting to themselves
   if(sum(supv==ee)>0){
     
