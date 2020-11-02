@@ -15,6 +15,12 @@
 
 hierarchyStats = function(ee,supv){
   
+  . = NULL
+  PeopleManager = NULL
+  Employee = NULL
+  Supervisor = NULL
+  Level = NULL
+  
   # Construct the tree and compute the statistics
   dt = hierarchy(ee,supv,format="long",descending=F)
   dt[,PeopleManager:=ifelse(Employee %in% Supervisor,T,F)]

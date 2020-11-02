@@ -17,13 +17,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of three functions, `hierarchyLong`, `hierarchyWide`, and `hierarchyStats`, is demonstrated below. These convert standard employee and supervisor relationship data to useful formats, summary statistics, and span of control metrics.
-
-Install the package from CRAN by running the `install.packages("hR")` command.
+Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of two functions, `hierarchy` and `hierarchyStats`, is demonstrated below. Convert standard employee and supervisor relationship data into useful formats for robust analytics, summary statistics, and span of control metrics. Install the package from CRAN by running the `install.packages("hR")` command.
 
 ## workforceHistory data
 
-The examples in this vignette use the sample `workforceHistory` data set which reflects an artificial organization's workforce history data. The sample is reduced to a data.table containing one row per active employee and contractor in order to properly use the subsequent functions.
+The examples in this vignette use the sample `workforceHistory` data set. This data set reflects an artificial organization's historical workforce/employment data. The sample is reduced to a data.table containing one row per active employee and contractor in order to properly iterate over the current hierarchy structure in the following sections.
 
 ```{r workforceHistory}
 data("workforceHistory")
@@ -49,12 +47,14 @@ print(dt[,.(EMPLID,NAME,TITLE,SUPVID)])
 ```
 
 
-## hierarchyLong
+## hierarchy
 
-The `hierarchyLong` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into an elongated format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a long data.table consisting of one row per employee for every supervisor above them, up to the top of the tree. The levels represent the number of supervisors from the employee (starting with "1" for an employee's direct supervisor).
+The `hierarchy` convenience function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into an elongated or wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan).
+
+When `format = "long"`, the function returns a long data.table consisting of one row per employee for every supervisor above them, up to the top of the tree. 
 
 ```{r hierarchyLong}
-hLong = hierarchyLong(dt$EMPLID,dt$SUPVID)
+hLong = hierarchy(dt$EMPLID,dt$SUPVID,format="long")
 print(hLong)
 
 # Who reports up through Susan? (direct and indirect reports)
@@ -62,12 +62,10 @@ print(hLong[Supervisor==CEO])
 ```
 
 
-## hierarchyWide
-
-The `hierarchyWide` function transforms a standard set of unique employee and supervisor identifiers (employee IDs, email addresses, etc.) into a wide format that can be used to aggregate employee data by a particular line of leadership (i.e. include everyone who rolls up to Susan). The function returns a wide data.table with a column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is likely the CEO in your organization).
+When `format = "wide"`, the function returns a wide data.table with a column for every level in the hierarchy, starting from the top of the tree (i.e. "Supv1" is the top person in the hierarchy).
 
 ```{r hierarchyWide}
-hWide = hierarchyWide(dt$EMPLID,dt$SUPVID)
+hWide = hierarchy(dt$EMPLID,dt$SUPVID,format="wide")
 print(hWide)
 
 # Who reports up through Pablo? (direct and indirect reports)

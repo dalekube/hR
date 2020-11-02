@@ -8,7 +8,7 @@
 #' @param supv A vector containing unique identifiers for supervisors. These values should be
 #' of the same type as the employee values.
 #' @param format character string; either "long" or "wide"; default = "long".
-#' @param descending boolean; default = TRUE. Should the hierarchy levels be descending 
+#' @param descending logical; default = TRUE. Should the hierarchy levels be descending 
 #' (i.e. the top person in the hierarchy is represented at level 1)?
 #' @import data.table
 #' @export
@@ -16,9 +16,12 @@
 #' @examples
 #' ee = c("Dale@hR.com","Bob@hR.com","Julie@hR.com","Andrea@hR.com")
 #' supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
-#' hierarchy(ee,supv,format="long",descending=T)
+#' hierarchy(ee,supv,format="long",descending=TRUE)
 
-hierarchy = function(ee,supv,format="long",descending=T){
+hierarchy = function(ee,supv,format="long",descending=TRUE){
+  
+  Level = NULL
+  Employee = NULL
   
   # Coerce to character data type
   ee = as.character(ee)
