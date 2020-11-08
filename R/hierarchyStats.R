@@ -61,7 +61,7 @@ hierarchyStats = function(ee,supv){
   setnames(directReports,"Supervisor","Employee")
   spanOfControl = dt[,.(spanOfControl=.N),by=Supervisor]
   setnames(spanOfControl,"Supervisor","Employee")
-  spanOfControl = merge.data.table(directReports,spanOfControl,by="Employee")
+  spanOfControl = merge(directReports,spanOfControl,by="Employee")
   output["spanOfControlTable"] = list(spanOfControl)
   
   # Median number of direct reports across the hierarchy
