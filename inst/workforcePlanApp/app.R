@@ -43,23 +43,22 @@ shinyApp(
       .metric {
         width:300px;
         height:auto;
-        margin:5px;
-        border-radius:5px;
-        border:thin black solid;
-        background-color:#EAEAEA;
-        display:inline-block;
+        margin: 10px 0px 10px 0px;
+        display:block;
         }
       .metricHeader {font-weight:bold; padding:3px;}
-      .box {width:1000px;border-radius:5px;border:thin lightgrey solid;padding:15px;margin:20px;}
-      .textBox {max-width:750px;}
+      .box {width:750px;border-top:thin lightgrey solid;padding:15px;margin:20px;}
+      .boxTop {width:750px;padding:15px;margin:20px;}
+      .textBox {width:725px;}
       .fa-seedling {font-size:50px;}
+      .progress, .shiny-input-container {margin:0px;}
       
       "
     )),
 
     div(
       
-      class="box",
+      class="boxTop",
       
       # Header
       div(
@@ -70,6 +69,8 @@ shinyApp(
       # Description paragraph
       p(
       class="textBox",
+      style="margin-top:10px;",
+      
       "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
       workforce planning tasks that support recruitment, team strategy, and business forecasting. Users indicate the roles
       within their team, cost per role estimates, and monthly desired headcounts. This leads to pragmatic calculations
@@ -93,8 +94,11 @@ shinyApp(
       will exist in the next 12 months. This ensures that you are planning ahead
       for all roles in your team. For example, type 'Data Analyst'."
       ),
-      uiOutput("TypeRolesUI"),
-      br(),
+      uiOutput("TypeRolesUI")
+    ),
+
+    div(
+      class="box",
     
       # Step 2: Specify Typical Cost Per Role
       h3("Step 2: Annual Cost Per Role"),
@@ -105,8 +109,11 @@ shinyApp(
       about $55,000 per year."
       ),
       br(),
-      rHandsontableOutput("spendHot"),
-      br(),
+      rHandsontableOutput("spendHot")
+    ),
+    
+    div(
+      class="box",
       
       # Step 3: Add Desired Headcounts
       h3("Step 3: Add Desired Headcounts"),
@@ -119,8 +126,11 @@ shinyApp(
       ),
       br(),
       rHandsontableOutput("hot"),
-      uiOutput("downloadButtonUI"),
-      br(),
+      uiOutput("downloadButtonUI")
+    ),
+      
+    div(
+      class="box",
       
       # Step 4: Calculate Change Metrics
       h3("Step 4: Calculate Change Metrics"),
@@ -132,16 +142,14 @@ shinyApp(
       cost estimates and headcounts in the previous steps."
       ),
       uiOutput("calculateUI"),
-      br(),
       
       div(
-        style="display:inline-block;",
         
-        uiOutput("NoChangeAlert",inline=T),
-        uiOutput("hires",inline=T),
-        uiOutput("turnover",inline=T),
-        uiOutput("headChange",inline=T),
-        uiOutput("totalSpending",inline=T)
+        uiOutput("NoChangeAlert"),
+        uiOutput("hires"),
+        uiOutput("turnover"),
+        uiOutput("headChange"),
+        uiOutput("totalSpending")
         
       )
       
