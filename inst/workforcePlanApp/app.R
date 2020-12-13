@@ -393,153 +393,171 @@ shinyApp(
       h = m[c(1,nrow(m)),-1]
       cols = colnames(m)[-1]
       m[,(cols):=lapply(.SD,as.numeric),.SDcols=cols]
-      m[,(cols):=lapply(.SD,function(z) z-c(NA,z[-.N])),.SDcols=cols]
-      m = melt.data.table(m,na.rm=T,id.vars="rn")
-      m = m[value!=0]
-
-      if(nrow(m)>0){
-
-        output$NoChangeAlert = renderUI({""})
-        m[,valuePrint:=paste0("<strong>",value,"</strong>")]
-
-        # expected hires
-        hires = m[value>0]
-        if(nrow(hires)>0){
-
-          hires[,value:=NULL]
-
-          output$hires = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Hires Per Month:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(hires,col.names=NULL,format="html",escape=F))
-              )
-            )
-
-          })
-
-        }else{
-
-          output$hires = renderUI({""})
-
-        }
-
-        # expected turnover
-        turnover = m[value<0]
-
-        if(nrow(turnover)>0){
-
-          turnover[,value:=NULL]
-
-          output$turnover = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Turnover Per Month:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(turnover,col.names=NULL,format="html",escape=F))
-              )
-            )
-
-          })
-
-        }else{
-
-          output$turnover = renderUI({""})
-
-        }
-
-        # Headcount change
-        h = as.data.frame(t(h),stringsAsFactors=F)
-        h$V1 = as.numeric(h$V1)
-        h$V2 = as.numeric(h$V2)
-        h$Change = h$V2-h$V1
-        h$Percent = 100*(h$Change/h$V1)
-        h$Role = row.names(h)
-        h = h[h$Change!=0,]
-
-        if(nrow(h)>0){
-
-          h$Percent = sprintf("%1.1f%%",h$Percent)
-          h$Sign = ifelse(h$Change>0,"+","")
-          h$Percent = paste0("(",h$Sign,h$Percent,")")
-          h = h[c("Role","Change","Percent")]
-          h$Change = paste0("<strong>",h$Change,"</strong>")
-          h$Percent = paste0("<strong>",h$Percent,"</strong>")
-
-          output$headChange = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected 12-Month Headcount Change:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
-                )
-
-            )
-
-          })
-
-        }else{
-
-          output$headChange = renderUI({""})
-
-        }
-
-        # Total Compensation
-        if(x$totalSpend>0){
-
-          total = paste0("$",format(x$totalSpend,big.mark=","))
-
-          output$totalSpending = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Total Annual Compensation:"
-              ),
-              div(
-                class="smallPad",
-                HTML(paste0("<span style='font-weight:bold'>",total,"</span"))
-              )
-
-            )
-
-          })
-
-        }else{
-
-          output$totalSpending = renderUI({""})
-
-        }
-
-      }else{
-
+      
+      NA_SUM = sum(m[, lapply(.SD, function(x) sum(is.na(x)))])
+      if(NA_SUM>0){
+        
         output$hires = renderUI({""})
         output$turnover = renderUI({""})
         output$headChange = renderUI({""})
         output$totalSpending = renderUI({""})
         output$NoChangeAlert = renderUI({
-
-          div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
-
+          
+          div(style="color:red;","Error: NA or empty values exist in the headcount table.")
+          
         })
-
+        
+      }else{
+        
+        m[,(cols):=lapply(.SD,function(z) z-c(NA,z[-.N])),.SDcols=cols]
+        m = melt.data.table(m,na.rm=T,id.vars="rn")
+        m = m[value!=0]
+        
+        if(nrow(m)>0){
+          
+          output$NoChangeAlert = renderUI({""})
+          m[,valuePrint:=paste0("<strong>",value,"</strong>")]
+          
+          # expected hires
+          hires = m[value>0]
+          if(nrow(hires)>0){
+            
+            hires[,value:=NULL]
+            
+            output$hires = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Hires Per Month:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(hires,col.names=NULL,format="html",escape=F))
+                )
+              )
+              
+            })
+            
+          }else{
+            
+            output$hires = renderUI({""})
+            
+          }
+          
+          # expected turnover
+          turnover = m[value<0]
+          
+          if(nrow(turnover)>0){
+            
+            turnover[,value:=NULL]
+            
+            output$turnover = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Turnover Per Month:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(turnover,col.names=NULL,format="html",escape=F))
+                )
+              )
+              
+            })
+            
+          }else{
+            
+            output$turnover = renderUI({""})
+            
+          }
+          
+          # Headcount change
+          h = as.data.frame(t(h),stringsAsFactors=F)
+          h$V1 = as.numeric(h$V1)
+          h$V2 = as.numeric(h$V2)
+          h$Change = h$V2-h$V1
+          h$Percent = 100*(h$Change/h$V1)
+          h$Role = row.names(h)
+          h = h[h$Change!=0,]
+          
+          if(nrow(h)>0){
+            
+            h$Percent = sprintf("%1.1f%%",h$Percent)
+            h$Sign = ifelse(h$Change>0,"+","")
+            h$Percent = paste0("(",h$Sign,h$Percent,")")
+            h = h[c("Role","Change","Percent")]
+            h$Change = paste0("<strong>",h$Change,"</strong>")
+            h$Percent = paste0("<strong>",h$Percent,"</strong>")
+            
+            output$headChange = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected 12-Month Headcount Change:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$headChange = renderUI({""})
+            
+          }
+          
+          # Total Compensation
+          if(x$totalSpend>0){
+            
+            total = paste0("$",format(x$totalSpend,big.mark=","))
+            
+            output$totalSpending = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Total Annual Compensation:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(paste0("<span style='font-weight:bold'>",total,"</span"))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$totalSpending = renderUI({""})
+            
+          }
+          
+        }else{
+          
+          output$hires = renderUI({""})
+          output$turnover = renderUI({""})
+          output$headChange = renderUI({""})
+          output$totalSpending = renderUI({""})
+          output$NoChangeAlert = renderUI({
+            
+            div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
+            
+          })
+          
+        }
+        
       }
 
     })
