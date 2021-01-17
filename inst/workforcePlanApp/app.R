@@ -43,23 +43,22 @@ shinyApp(
       .metric {
         width:300px;
         height:auto;
-        margin:5px;
-        border-radius:5px;
-        border:thin black solid;
-        background-color:#EAEAEA;
-        display:inline-block;
+        margin: 10px 0px 10px 0px;
+        display:block;
         }
       .metricHeader {font-weight:bold; padding:3px;}
-      .box {width:1000px;border-radius:5px;border:thin lightgrey solid;padding:15px;margin:20px;}
-      .textBox {max-width:750px;}
+      .box {width:750px;border-top:thin lightgrey solid;padding:15px;margin:20px;}
+      .boxTop {width:750px;padding:15px;margin:20px;}
+      .textBox {width:725px;}
       .fa-seedling {font-size:50px;}
+      .progress, .shiny-input-container {margin:0px;}
       
       "
     )),
 
     div(
       
-      class="box",
+      class="boxTop",
       
       # Header
       div(
@@ -70,6 +69,8 @@ shinyApp(
       # Description paragraph
       p(
       class="textBox",
+      style="margin-top:10px;",
+      
       "This simple, interactive workforce planning worksheet allows people managers and team leaders to execute basic
       workforce planning tasks that support recruitment, team strategy, and business forecasting. Users indicate the roles
       within their team, cost per role estimates, and monthly desired headcounts. This leads to pragmatic calculations
@@ -93,8 +94,11 @@ shinyApp(
       will exist in the next 12 months. This ensures that you are planning ahead
       for all roles in your team. For example, type 'Data Analyst'."
       ),
-      uiOutput("TypeRolesUI"),
-      br(),
+      uiOutput("TypeRolesUI")
+    ),
+
+    div(
+      class="box",
     
       # Step 2: Specify Typical Cost Per Role
       h3("Step 2: Annual Cost Per Role"),
@@ -105,8 +109,11 @@ shinyApp(
       about $55,000 per year."
       ),
       br(),
-      rHandsontableOutput("spendHot"),
-      br(),
+      rHandsontableOutput("spendHot")
+    ),
+    
+    div(
+      class="box",
       
       # Step 3: Add Desired Headcounts
       h3("Step 3: Add Desired Headcounts"),
@@ -119,8 +126,11 @@ shinyApp(
       ),
       br(),
       rHandsontableOutput("hot"),
-      uiOutput("downloadButtonUI"),
-      br(),
+      uiOutput("downloadButtonUI")
+    ),
+      
+    div(
+      class="box",
       
       # Step 4: Calculate Change Metrics
       h3("Step 4: Calculate Change Metrics"),
@@ -132,16 +142,14 @@ shinyApp(
       cost estimates and headcounts in the previous steps."
       ),
       uiOutput("calculateUI"),
-      br(),
       
       div(
-        style="display:inline-block;",
         
-        uiOutput("NoChangeAlert",inline=T),
-        uiOutput("hires",inline=T),
-        uiOutput("turnover",inline=T),
-        uiOutput("headChange",inline=T),
-        uiOutput("totalSpending",inline=T)
+        uiOutput("NoChangeAlert"),
+        uiOutput("hires"),
+        uiOutput("turnover"),
+        uiOutput("headChange"),
+        uiOutput("totalSpending")
         
       )
       
@@ -385,153 +393,171 @@ shinyApp(
       h = m[c(1,nrow(m)),-1]
       cols = colnames(m)[-1]
       m[,(cols):=lapply(.SD,as.numeric),.SDcols=cols]
-      m[,(cols):=lapply(.SD,function(z) z-c(NA,z[-.N])),.SDcols=cols]
-      m = melt.data.table(m,na.rm=T,id.vars="rn")
-      m = m[value!=0]
-
-      if(nrow(m)>0){
-
-        output$NoChangeAlert = renderUI({""})
-        m[,valuePrint:=paste0("<strong>",value,"</strong>")]
-
-        # expected hires
-        hires = m[value>0]
-        if(nrow(hires)>0){
-
-          hires[,value:=NULL]
-
-          output$hires = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Hires Per Month:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(hires,col.names=NULL,format="html",escape=F))
-              )
-            )
-
-          })
-
-        }else{
-
-          output$hires = renderUI({""})
-
-        }
-
-        # expected turnover
-        turnover = m[value<0]
-
-        if(nrow(turnover)>0){
-
-          turnover[,value:=NULL]
-
-          output$turnover = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Turnover Per Month:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(turnover,col.names=NULL,format="html",escape=F))
-              )
-            )
-
-          })
-
-        }else{
-
-          output$turnover = renderUI({""})
-
-        }
-
-        # Headcount change
-        h = as.data.frame(t(h),stringsAsFactors=F)
-        h$V1 = as.numeric(h$V1)
-        h$V2 = as.numeric(h$V2)
-        h$Change = h$V2-h$V1
-        h$Percent = 100*(h$Change/h$V1)
-        h$Role = row.names(h)
-        h = h[h$Change!=0,]
-
-        if(nrow(h)>0){
-
-          h$Percent = sprintf("%1.1f%%",h$Percent)
-          h$Sign = ifelse(h$Change>0,"+","")
-          h$Percent = paste0("(",h$Sign,h$Percent,")")
-          h = h[c("Role","Change","Percent")]
-          h$Change = paste0("<strong>",h$Change,"</strong>")
-          h$Percent = paste0("<strong>",h$Percent,"</strong>")
-
-          output$headChange = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected 12-Month Headcount Change:"
-              ),
-              div(
-                class="smallPad",
-                HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
-                )
-
-            )
-
-          })
-
-        }else{
-
-          output$headChange = renderUI({""})
-
-        }
-
-        # Total Compensation
-        if(x$totalSpend>0){
-
-          total = paste0("$",format(x$totalSpend,big.mark=","))
-
-          output$totalSpending = renderUI({
-
-            div(
-              class="metric",
-              div(
-                class="metricHeader",
-                "Expected Total Annual Compensation:"
-              ),
-              div(
-                class="smallPad",
-                HTML(paste0("<span style='font-weight:bold'>",total,"</span"))
-              )
-
-            )
-
-          })
-
-        }else{
-
-          output$totalSpending = renderUI({""})
-
-        }
-
-      }else{
-
+      
+      NA_SUM = sum(m[, lapply(.SD, function(x) sum(is.na(x)))])
+      if(NA_SUM>0){
+        
         output$hires = renderUI({""})
         output$turnover = renderUI({""})
         output$headChange = renderUI({""})
         output$totalSpending = renderUI({""})
         output$NoChangeAlert = renderUI({
-
-          div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
-
+          
+          div(style="color:red;","Error: NA or empty values exist in the headcount table.")
+          
         })
-
+        
+      }else{
+        
+        m[,(cols):=lapply(.SD,function(z) z-c(NA,z[-.N])),.SDcols=cols]
+        m = melt.data.table(m,na.rm=T,id.vars="rn")
+        m = m[value!=0]
+        
+        if(nrow(m)>0){
+          
+          output$NoChangeAlert = renderUI({""})
+          m[,valuePrint:=paste0("<strong>",value,"</strong>")]
+          
+          # expected hires
+          hires = m[value>0]
+          if(nrow(hires)>0){
+            
+            hires[,value:=NULL]
+            
+            output$hires = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Hires Per Month:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(hires,col.names=NULL,format="html",escape=F))
+                )
+              )
+              
+            })
+            
+          }else{
+            
+            output$hires = renderUI({""})
+            
+          }
+          
+          # expected turnover
+          turnover = m[value<0]
+          
+          if(nrow(turnover)>0){
+            
+            turnover[,value:=NULL]
+            
+            output$turnover = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Turnover Per Month:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(turnover,col.names=NULL,format="html",escape=F))
+                )
+              )
+              
+            })
+            
+          }else{
+            
+            output$turnover = renderUI({""})
+            
+          }
+          
+          # Headcount change
+          h = as.data.frame(t(h),stringsAsFactors=F)
+          h$V1 = as.numeric(h$V1)
+          h$V2 = as.numeric(h$V2)
+          h$Change = h$V2-h$V1
+          h$Percent = 100*(h$Change/h$V1)
+          h$Role = row.names(h)
+          h = h[h$Change!=0,]
+          
+          if(nrow(h)>0){
+            
+            h$Percent = sprintf("%1.1f%%",h$Percent)
+            h$Sign = ifelse(h$Change>0,"+","")
+            h$Percent = paste0("(",h$Sign,h$Percent,")")
+            h = h[c("Role","Change","Percent")]
+            h$Change = paste0("<strong>",h$Change,"</strong>")
+            h$Percent = paste0("<strong>",h$Percent,"</strong>")
+            
+            output$headChange = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected 12-Month Headcount Change:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(kable(h,col.names=NULL,row.names=F,format="html",escape=F))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$headChange = renderUI({""})
+            
+          }
+          
+          # Total Compensation
+          if(x$totalSpend>0){
+            
+            total = paste0("$",format(x$totalSpend,big.mark=","))
+            
+            output$totalSpending = renderUI({
+              
+              div(
+                class="metric",
+                div(
+                  class="metricHeader",
+                  "Expected Total Annual Compensation:"
+                ),
+                div(
+                  class="smallPad",
+                  HTML(paste0("<span style='font-weight:bold'>",total,"</span"))
+                )
+                
+              )
+              
+            })
+            
+          }else{
+            
+            output$totalSpending = renderUI({""})
+            
+          }
+          
+        }else{
+          
+          output$hires = renderUI({""})
+          output$turnover = renderUI({""})
+          output$headChange = renderUI({""})
+          output$totalSpending = renderUI({""})
+          output$NoChangeAlert = renderUI({
+            
+            div(style="color:red;","There aren't any changes in headcounts. There is nothing to analyze.")
+            
+          })
+          
+        }
+        
       }
 
     })
