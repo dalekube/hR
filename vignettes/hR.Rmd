@@ -1,10 +1,10 @@
 ---
-title: "hR: Toolkit for Data Analytics in Human Resources"
+title: "hR: Better Data Engineering in Human Resources"
 author: "Dale Kube"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hR: Toolkit for Data Analytics in Human Resources}
+  %\VignetteIndexEntry{hR: Better Data Engineering in Human Resources}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-Transform and analyze workforce data in meaningful ways for human resources (HR) analytics. The use of two functions, `hierarchy` and `hierarchyStats`, is demonstrated below. Convert standard employee and supervisor relationship data into useful formats for robust analytics, summary statistics, and span of control metrics. Install the package from CRAN by running the `install.packages("hR")` command.
+Methods for data engineering in the human resources (HR) corporate domain. Designed for HR analytics practitioners and workforce-oriented data sets. The use of two functions, `hierarchy` and `hierarchyStats`, is demonstrated below. Convert standard employee and supervisor relationship data into useful formats for robust analytics, summary statistics, and span of control metrics. Install the package from CRAN by running the `install.packages("hR")` command.
 
 ## workforceHistory data
 
