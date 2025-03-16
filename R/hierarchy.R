@@ -18,7 +18,7 @@
 #' supv = c("Julie@hR.com","Julie@hR.com","Andrea@hR.com","Susan@hR.com")
 #' hierarchy(ee,supv,format="long",descending=TRUE)
 
-hierarchy = function(ee,supv,format="long",descending=TRUE){
+hierarchy = function(ee, supv, format="long", descending=TRUE){
   
   Level = NULL
   Employee = NULL
@@ -34,7 +34,7 @@ hierarchy = function(ee,supv,format="long",descending=TRUE){
   }
   
   # Validate the input vectors for completeness and quality
-  hierarchyValid(ee,supv)
+  hierarchyValid(ee, supv)
   
   # Recursively look up hierarchy
   df = data.table(ee,supv)
@@ -56,7 +56,14 @@ hierarchy = function(ee,supv,format="long",descending=TRUE){
   
   if(format=="long"){
     
-    df = melt.data.table(df,id.vars="Employee",variable.name="Level",value.name="Supervisor",na.rm=T,variable.factor=F)
+    df = melt.data.table(
+      df,
+      id.vars="Employee",
+      variable.name="Level",
+      value.name="Supervisor",
+      na.rm=T,
+      variable.factor=F
+      )
     df[,Level:=as.integer(Level)]
     
     if(descending){
@@ -65,24 +72,27 @@ hierarchy = function(ee,supv,format="long",descending=TRUE){
       df$Level = df[,(1:.N),by=Employee]$V1
       return(df)
       
-    }else{
+    } else {
       
       setorder(df,Employee,Level)
       return(df)
       
     }
     
-  }else{
+  } else {
     
     if(descending){
       
       setcolorder(df,"Employee")
-      df = cbind(df[,1],t(apply(df[,-1], 1, function(x) c(x[!is.na(x)], x[is.na(x)]))))
+      df = cbind(
+        df[,1],
+        t(apply(df[,-1], 1, function(x) c(x[!is.na(x)], x[is.na(x)])))
+        )
       supv_cols = paste0("Supv",seq(1,ncol(df)-1))
       setnames(df,c("Employee",supv_cols))
       return(df)
       
-    }else{
+    } else {
       
       setcolorder(df,rev(colnames(df)))
       cols = colnames(df)[2:ncol(df)]
